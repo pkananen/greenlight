@@ -1,0 +1,58 @@
+h4 {
+  margin-top: 25px;
+}
+.row {
+  margin-bottom: 20px;
+}
+.row .row {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+.block {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  background-color: rgba(86,61,124,.15);
+  border: 1px solid #ddd;
+  border: 1px solid rgba(86,61,124,.2);
+}
+
+.block-warn {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #ff0;
+  background-color: rgba(255,255,0,.15);
+  border: 1px solid #000;
+  border: 1px solid rgba(0,0,0,.2);
+}
+
+.block-alert {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #f00;
+  background-color: rgba(255,0,0,.15);
+  border: 1px solid #000;
+  border: 1px solid rgba(0,0,0,.2);
+}
+
+hr {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.middle-blocks-height {
+  height: 425px;
+}
+
+.smaller-text {
+  font-size: .81em;
+}
+
+.even-columns {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+    width: 9.09090909091%;
+}

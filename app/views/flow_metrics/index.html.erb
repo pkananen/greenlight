@@ -1,1 +1,108 @@
-HI
+<body ng-app="flowMetrics">
+  <div class="container" ng-controller="FlowController as flow">
+    <div class="page-header">
+      <button class="btn btn-primary" ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
+      <button class="btn btn-danger" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
+      <span>Warning on WIP 2, Alerting on WIP 3</span>
+    </div>
+    <div class="row">
+      <div class="even-columns" ng-repeat="column in flow.board.columns" ng-class="flow.columnState(column)">
+        <span><strong>{{column.name}}</strong></span>
+      </div>
+    </div>
+    <div class="row middle-blocks-height">
+      <div class="even-columns block" ng-repeat="column in flow.board.columns">
+        <span class='smaller-text' ng-repeat="item in flow.board.itemsInColumn(column)">
+          {{item.name}} - {{item.workRemaining}}
+        </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="even-columns block" ng-repeat="column in flow.board.columns">
+        <span class='smaller-text'>WIP: {{flow.board.itemsInColumn(column).length}}/{{column.wipLimit}}</span>
+      </div>
+    </div>
+    <div class="row">
+      <table class="table table-striped">
+        <caption><strong>Work Item Times</strong></caption>
+        <thead>
+          <th>Item</th>
+          <th>Active Time</th>
+          <th>Inactive Time</th>
+          <th>Total Time</th>
+          <th>% Inactive</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="widget in flow.board.items">
+            <td>{{widget.name}}</td>
+            <td>{{(widget.times['active'] / 1000).toFixed(2)}}</td>
+            <td>{{(widget.times['idle'] / 1000).toFixed(2)}}</td>
+            <td>{{((widget.times['active'] + widget.times['idle']) / 1000).toFixed(2)}}</td>
+            <td>{{flow.idleTimePercentage(widget)}}</td>
+          </tr>
+          <tr>
+            <td><strong>Totals</strong></td>
+            <td>{{(flow.totalActiveTime() / 1000).toFixed(2)}}</td>
+            <td>{{(flow.totalIdleTime() / 1000).toFixed(2)}}</td>
+            <td>{{(flow.totalTime() / 1000).toFixed(2)}}</td>
+            <td>{{flow.totalIdleTimePercentage()}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <table class="table table-striped">
+        <caption><strong>Average Queue Sizes</strong></caption>
+        <thead>
+          <th  class='col-xs-3' ng-repeat="col in flow.board.queueColumns()">
+            {{col.name}}
+          </th>
+        </thead>
+        <tbody>
+          <tr>
+            <td  class='col-xs-3' ng-repeat="col in flow.board.queueColumns()">
+              {{flow.averageQueueSize(col)}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <table class="table table-striped">
+        <caption><strong>Historical Times</strong></caption>
+        <thead>
+          <th class='col-xs-3'>Active Time</td>
+            <th class='col-xs-3'>Idle Time</td>
+              <th class='col-xs-3'>Total Time</td>
+                <th class='col-xs-3'>% Inactive</td>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="historical in flow.historicalTimes">
+                    <td class='col-xs-3'>{{(historical[0] / 1000).toFixed(2)}}</td>
+                    <td class='col-xs-3'>{{(historical[1] / 1000).toFixed(2)}}</td>
+                    <td class='col-xs-3'>{{(historical[2] / 1000).toFixed(2)}}</td>
+                    <td class='col-xs-3'>{{historical[3]}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row">
+              <table class="table table-striped">
+                <caption><strong>Historical Queue Sizes</strong></caption>
+                <thead>
+                  <th class='col-xs-3' ng-repeat="col in flow.queueColumns()">
+                    {{col.name}}
+                  </th>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="historical in flow.historicalQueues">
+                    <td class='col-xs-3'>{{historical[0]}}</td>
+                    <td class='col-xs-3'>{{historical[1]}}</td>
+                    <td class='col-xs-3'>{{historical[2]}}</td>
+                    <td class='col-xs-3'>{{historical[3]}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </body>

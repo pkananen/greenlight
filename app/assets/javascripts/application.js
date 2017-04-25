@@ -14,4 +14,6 @@
 //= require angular
 //= require lodash
 //= require moment
+//= require angular-moment
+//= require flow-metrics.app
 //= require_self
