@@ -5,17 +5,22 @@ angular.module('flowMetrics.flow', [])
 
     flow.historicalTimes = [];
     flow.historicalQueues = [];
+    flow.valueTimes = [];
     flow.done = false;
     flow.running = false;
     flow.maxItemProgress = 1;
     flow.minItemProgress = 1;
-    flow.warnLevel = 2;
-    flow.alertLevel = 3;
     flow.timer = undefined;
 
-    flow.workSizes = [1, 2, 3, 4, 5, 8, 13];
-    flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
+    flow.sizeOptions = {'None (2)': 0, 'Low (1-3)': 1, 'High (1-17)': 2};
 
+    flow.workSizes = {0: [2, 2, 2, 2], 1: [1, 2, 2, 3], 2: [1, 3, 5, 7, 11, 17]};
+    flow.workVariability = 1;
+
+    flow.productivitySizes = {0: [2, 2, 2, 2], 1: [1, 2, 2, 3], 2: [1, 3, 5, 7, 11, 17]};
+    flow.productivityVariability = 1;
+
+    flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
 
     flow.resetBoard = function() {
       if (flow.running) { return; };
@@ -34,25 +39,29 @@ angular.module('flowMetrics.flow', [])
       else {
         $interval.cancel(flow.timer);
       }
-      _.each(flow.board.items, flow.resetItem);
+      flow.board.resetItems();
       flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
       flow.maxItemProgress = 1;
       flow.minItemProgress = 1;
+      flow.valueTimes = [];
       flow.done = false;
       flow.running = false;
     };
 
-    flow.resetItem = function(item) {
-      item.columnId = 1;
-      item.timestamp = 0;
-      item.times = {active: 0, idle: 0};
-      item.workRemaining = _.sample(flow.workSizes);
-    };
-
     flow.play = function() {
       flow.running = true;
-      flow.timer = $interval(flow.tickBoard, 300);
+      flow.timer = $interval(flow.tickBoard, 800);
     };
+
+    flow.valueDelivered = function() {
+      let value = _.sum(_.map(flow.valueTimes, function(k,v) { return v; }));
+      return value;
+    }
+
+    flow.pause = function() {
+      flow.running = false;
+      $interval.cancel(flow.timer);
+    }
 
     flow.tickBoard = function() {
       if (flow.board.itemsInColumn(flow.board.columnById('11')).length == flow.board.items.length) {
@@ -85,11 +94,28 @@ angular.module('flowMetrics.flow', [])
         }
         if (workColumn.id > 1) {
           while (flow.board.columnUnderWipLimit(workColumn)) {
+
             let pullColumn = flow.board.columnById(workColumn.id - 1);
             let itemToPull = _.first(flow.board.itemsInColumn(pullColumn));
             if (itemToPull) {
-              console.log(workColumn.name + " trying to pull " + itemToPull.name + " from " + pullColumn.name + "...");
-              flow.moveItem(itemToPull);
+              let itemBatch = flow.board.batchById(itemToPull.batchId);
+              if (itemBatch) {
+                let batchesSatisfied = flow.board.batchSatisfied(itemBatch, itemToPull.columnId);
+                if (batchesSatisfied) {
+                  console.log("batches for " + itemToPull.name + " are satisfied - " + batchesSatisfied);
+                  console.log(workColumn.name + " trying to pull " + itemToPull.name + " from " + pullColumn.name + "...");
+                  flow.moveItem(itemToPull);
+                }
+                else {
+                  console.log("batches for " + itemToPull.name + " are satisfied - " + batchesSatisfied);
+                  break;
+                }
+              }
+              else {
+                console.log("no batches for " + itemToPull.name);
+                console.log(workColumn.name + " trying to pull " + itemToPull.name + " from " + pullColumn.name + "...");
+                flow.moveItem(itemToPull);
+              }
             }
             else {
               break;
@@ -100,7 +126,7 @@ angular.module('flowMetrics.flow', [])
     };
 
     flow.doWork = function(item) {
-      let productivity = _.sample([0, 0, 1, 2]);
+      let productivity = _.sample(flow.productivitySizes[flow.productivityVariability]);
       console.log(item.workRemaining + " work remaining on " + item.name + ", productivity of " + productivity);
       let delta = item.workRemaining - productivity;
       if (delta < 0) {
@@ -132,37 +158,20 @@ angular.module('flowMetrics.flow', [])
       if (!col.idle || col.start || col.end) {
         return "block";
       }
-      else if (flow.board.itemsInColumn(col).length >= flow.alertLevel) {
+      else if (flow.board.itemsInColumn(col).length >= col.wipLimit) {
         return "block-alert";
-      }
-      else if (flow.board.itemsInColumn(col).length >= flow.warnLevel) {
-        return "block-warn";
       }
       else {
         return "block";
       }
     }
-
-    flow.columnState = function(col) {
-      if (!col.idle || col.start || col.end) {
-        return "block";
-      }
-      else if (flow.board.itemsInColumn(col).length >= flow.alertLevel) {
-        return "block-alert";
-      }
-      else if (flow.board.itemsInColumn(col).length >= flow.warnLevel) {
-        return "block-warn";
-      }
-      else {
-        return "block";
-      }
-    }
-
 
     flow.moveItem = function(item) {
       let newTimestamp = new Date();
       let fromColumn = flow.board.columnById(item.columnId);
       if (fromColumn.end) { return; }
+
+      // try to go to the next
 
       let toColumn = flow.board.columnById(item.columnId + 1);
       console.log("trying to move " + item.name + " from " + fromColumn.name + " to " + toColumn.name + "...");
@@ -173,22 +182,27 @@ angular.module('flowMetrics.flow', [])
 
       if (!fromColumn.start) {
         if (fromColumn.idle) {
+          // flow.idleTimes[item.id] += (newTimestamp - item.timestamp);
           item.times['idle'] = item.times['idle'] + (newTimestamp - item.timestamp);
         }
         else {
+          // flow.activeTimes[item.id] += (newTimestamp - item.timestamp);
           item.times['active'] = item.times['active'] + (newTimestamp - item.timestamp);
         }
       }
       item.timestamp = newTimestamp;
       item.columnId = toColumn.id;
-      item.workRemaining = _.sample(flow.workSizes);
+      item.workRemaining = _.sample(flow.workSizes[flow.workVariability]);
       flow.maxItemProgress = _.max([flow.maxItemProgress, toColumn.id]);
       if (flow.board.itemsRemainingForColumn(fromColumn).length == 0) {
         flow.minItemProgress = toColumn.id;
       }
+      if (toColumn.end) {
+        // if item.batchId
+        flow.valueTimes.push({'timestamp': newTimestamp, "value": item.value});
+      }
       console.log("...success!");
     };
-
 
     flow.idleTimePercentage = function(item) {
         let idleTime = item.times['idle'];

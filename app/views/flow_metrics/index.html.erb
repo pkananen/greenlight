@@ -3,7 +3,9 @@
     <div class="page-header">
       <button class="btn btn-primary" ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
       <button class="btn btn-danger" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
-      <span>Warning on WIP 2, Alerting on WIP 3</span>
+      <label>Work Variance</label><select ng-model="flow.workVariability" ng-options="k for (k, v) in flow.sizeOptions" ng-disabled="flow.running"></select>
+      <label>Productivity Variance</label><select ng-model="flow.productivityVariability" ng-options="k for (k, v) in flow.sizeOptions" ng-disabled="flow.running"></select>
+      <label>Value Delivered</label><span class="smaller-text" > {{ flow.valueDelivered() }}</span>
     </div>
     <div class="row">
       <div class="even-columns" ng-repeat="column in flow.board.columns" ng-class="flow.columnState(column)">
@@ -12,8 +14,8 @@
     </div>
     <div class="row middle-blocks-height">
       <div class="even-columns block" ng-repeat="column in flow.board.columns">
-        <span class='smaller-text' ng-repeat="item in flow.board.itemsInColumn(column)">
-          {{item.name}} - {{item.workRemaining}}
+        <span class="smaller-text" ng-repeat="item in flow.board.itemsInColumn(column)" ng-class="flow.board.batchStyle(item)">
+          {{item.name}} - {{item.workRemaining}} - {{flow.board.batchById(item.batchId).columns}}
         </span>
       </div>
     </div>
@@ -22,6 +24,8 @@
         <span class='smaller-text'>WIP: {{flow.board.itemsInColumn(column).length}}/{{column.wipLimit}}</span>
       </div>
     </div>
+
+    <!-- WORK TIMES -->
     <div class="row">
       <table class="table table-striped">
         <caption><strong>Work Item Times</strong></caption>

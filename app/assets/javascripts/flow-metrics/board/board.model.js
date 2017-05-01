@@ -11,6 +11,7 @@
     board.dataService = FlowDataFactory;
     board.columns = board.dataService.getColumns();
     board.items = board.dataService.getItems();
+    board.batches = board.dataService.getBatches();
 
     return {
       columns: board.columns,
@@ -22,7 +23,23 @@
       items: board.items,
       itemsInColumn: itemsInColumn,
       activeItems: activeItems,
-      itemsRemainingForColumn: itemsRemainingForColumn
+      itemsRemainingForColumn: itemsRemainingForColumn,
+      itemsInBatch: itemsInBatch,
+      batchesSatisfied: batchesSatisfied,
+      batchSatisfied: batchSatisfied,
+      batchesForColumnId: batchesForColumnId,
+      batchStyle: batchStyle,
+      batchById: batchById,
+      resetItems: resetItems
+    }
+
+    function resetItems() {
+      _.each(board.items, function(itm) {
+        itm.columnId = 1;
+        itm.timestamp = 0;
+        itm.times = {active: 0, idle: 0};
+        itm.workRemaining = 1;
+      });
     }
 
     function itemsInColumn(column) {
@@ -38,6 +55,60 @@
       });
       return qs;
     };
+
+    function itemsInBatch(batchId) {
+      let items = _.filter(board.items, function(itm) {
+        return itm.batchId == batchId;
+      });
+      return items;
+    }
+
+    function batchStyle(item) {
+      return "batch-" + item.batchId;
+    }
+
+    function batchesSatisfied(item) {
+      _.each(item.batches, function(bch) {
+        if (!batchSatisfied(bch, item.columnId)) {
+          return false;
+        }
+      });
+      return true;
+    }
+
+    function batchSatisfied(batch, colId) {
+      if (colId == undefined) {
+        colId = _.max(batch.columns);
+      }
+      let lowestItemCol = _.min(_.map(itemsInBatch(batch.id), 'columnId'));
+      if (lowestItemCol  < colId) {
+        return false;
+      }
+      _.each(dependentBatchesForBatch(batch), function(depBch) {
+        if (!batchSatisfied(depBch, colId)) {
+          return false;
+        }
+      });
+      return true;
+    }
+
+    function batchesForColumnId(colId) {
+      return _.find(board.batches, function(bch) {
+        return _.includes(bch.columns, colId);
+      });
+    }
+
+    function dependentBatchesForBatch(batch) {
+      return _.find(board.batches, function(bch) {
+        return _.includes(board.dependent, bch.id);
+      });
+    }
+
+    function batchById(batchId) {
+      return _.find(board.batches, function(bch) {
+        return bch.id == batchId;
+      });
+    }
 
     function idleColumns() {
       return _.filter(board.columns, function(col) {
