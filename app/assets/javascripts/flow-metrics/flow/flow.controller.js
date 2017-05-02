@@ -197,9 +197,16 @@ angular.module('flowMetrics.flow', [])
       if (flow.board.itemsRemainingForColumn(fromColumn).length == 0) {
         flow.minItemProgress = toColumn.id;
       }
+
       if (toColumn.end) {
-        // if item.batchId
-        flow.valueTimes.push({'timestamp': newTimestamp, "value": item.value});
+        if (item.batchId) {
+          if (flow.board.batchSatisfied(flow.board.batchById(item.batchId), toColumn.id)) {
+            flow.valueTimes.push({'timestamp': newTimestamp, "value": flow.board.valueForBatch(item.batchId)});
+          }
+        }
+        else {
+          flow.valueTimes.push({'timestamp': newTimestamp, "value": item.value});
+        }
       }
       console.log("...success!");
     };

@@ -25,10 +25,10 @@
       activeItems: activeItems,
       itemsRemainingForColumn: itemsRemainingForColumn,
       itemsInBatch: itemsInBatch,
-      batchesSatisfied: batchesSatisfied,
       batchSatisfied: batchSatisfied,
       batchesForColumnId: batchesForColumnId,
       batchStyle: batchStyle,
+      valueForBatch: valueForBatch,
       batchById: batchById,
       resetItems: resetItems
     }
@@ -67,13 +67,8 @@
       return "batch-" + item.batchId;
     }
 
-    function batchesSatisfied(item) {
-      _.each(item.batches, function(bch) {
-        if (!batchSatisfied(bch, item.columnId)) {
-          return false;
-        }
-      });
-      return true;
+    function valueForBatch(batchId) {
+      return _.sumBy(itemsInBatch(batchId), function(itm) { return itm.value; });
     }
 
     function batchSatisfied(batch, colId) {
