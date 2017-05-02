@@ -54,7 +54,7 @@ angular.module('flowMetrics.flow', [])
     };
 
     flow.valueDelivered = function() {
-      let value = _.sum(_.map(flow.valueTimes, function(k,v) { return v; }));
+      let value = _.sum(_.map(flow.valueTimes, function(v) { return v.value; }));
       return value;
     }
 
