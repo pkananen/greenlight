@@ -77,7 +77,7 @@ angular.module('flowMetrics.flow', [])
     };
 
     flow.tickWorkers = function() {
-      let walkTheBoard = _.sortBy(flow.board.workColumns(), 'id').reverse();
+      let walkTheBoard = _.shuffle(flow.board.workColumns());
       _.each(walkTheBoard, function(workColumn) {
         console.log("ticking column " + workColumn.name);
         let workItem = _.first(_.sortBy(flow.board.itemsInColumn(workColumn), 'id'));
