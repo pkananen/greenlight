@@ -111,8 +111,9 @@ angular.module('flowMetrics.flow', [])
             let itemToPull = _.first(flow.board.itemsInColumn(pullColumn));
             if (itemToPull) {
               let itemBatch = flow.board.batchById(itemToPull.batchId);
-              if (itemBatch) {
-                let batchesSatisfied = flow.board.batchSatisfied(itemBatch, itemToPull.columnId);
+              // make sure the batch applies to this column
+              if (itemBatch && _.includes(itemBatch.columns, pullColumn.id)) {
+                let batchesSatisfied = flow.board.batchSatisfied(itemBatch, pullColumn.id);
                 if (batchesSatisfied) {
                   console.log("batches for " + itemToPull.name + " are satisfied - " + batchesSatisfied);
                   console.log(workColumn.name + " trying to pull " + itemToPull.name + " from " + pullColumn.name + "...");
