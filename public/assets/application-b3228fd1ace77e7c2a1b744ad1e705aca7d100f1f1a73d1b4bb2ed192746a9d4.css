@@ -1,0 +1,147 @@
+h4 {
+  margin-top: 25px;
+}
+.row {
+  margin-bottom: 20px;
+}
+
+
+.row .row {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+.block {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eeebeb;
+  border: 1px solid #ddd;
+}
+
+.block-warn {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #ff0;
+  background-color: rgba(255,255,0,.15);
+  border: 1px solid #000;
+}
+
+.block-alert {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #f00;
+  background-color: rgba(255,0,0,.15);
+  border: 1px solid #000;
+  border: 1px solid rgba(0,0,0,.2);
+}
+
+hr {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.middle-blocks-height {
+  height: 524px;
+}
+
+.smaller-text {
+  font-size: .81em;
+}
+
+.even-columns {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+    float: left;
+    width: 9.09090909091%;
+    overflow: visible;
+    height: 100%;
+}
+
+.columns {
+  border-left: 1px solid #ddd;
+}
+
+.columns:last-child {
+  border-right: 1px solid #ddd;
+}
+
+.batch {
+  padding: 2px;
+  border: 1px solid #ddd;
+  width: 100%;
+  margin: 4px 0px;
+  text-align: center;
+}
+
+.batch-0 {
+  background-color: none;
+}
+
+.batch-1 {
+  background-color: rgba(105, 195, 226, 0.4);
+}
+
+.batch-2 {
+  background-color: rgba(235, 205, 30, 0.4);
+}
+
+.batch-3 {
+  background-color: rgba(224, 88, 81, 0.4);
+}
+
+.batch-4 {
+  background-color: rgba(134, 130, 214, 0.4);
+}
+
+.batch-5 {
+  background-color: rgba(111, 194, 104, 0.4);
+}
+
+.column-header {
+  min-height: 72px;
+}
+
+.column-footer {
+  min-height: 53px;
+}
+
+.flow-board {
+  border: 1px solid #ddd;
+}
+
+.no-margin-bottom {
+  margin-bottom: 0px;
+}
+
+.no-padding {
+  padding: 0px;
+}
+
+.float-right {
+  float: right;
+}
+
+.u-padding-left {
+  padding-left: 10px;
+}
+
+.u-margin-left {
+  margin-left: 10px;
+}
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+
+
+ */
+
