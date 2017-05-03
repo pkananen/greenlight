@@ -27,6 +27,12 @@ angular.module('flowMetrics.flow', [])
 
     flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
     flow.wipSizes = {2: [], 4: [], 6: [], 8: [], 10: []};
+    flow.setWorkSizes = function() {
+      _.each(flow.board.items, function(itm) {
+        let productivity = _.sample(flow.workSizes[flow.workVariability]);
+        itm.workRemaining = productivity;
+      });
+    }
 
     flow.resetBoard = function() {
       if (flow.running) { return; };
@@ -257,6 +263,20 @@ angular.module('flowMetrics.flow', [])
           return (Math.round((idleTime / totalTime) * 100)) + "%";
         }
     };
+
+    flow.batchStyle = function(item) {
+      if (flow.batchesOn) {
+        if (item.batchId) {
+          return "batch-" + item.batchId;
+        }
+        else {
+          return "batch-0";
+        }
+      }
+      else {
+        return "batch-0";
+      }
+    }
 
     flow.totalActiveTime = function() {
       return _.reduce(flow.board.items, function(memo, itm) { return memo + itm.times['active']; }, 0);
