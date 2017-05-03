@@ -141,6 +141,12 @@ angular.module('flowMetrics.flow', [])
     flow.doWork = function(column, item) {
       let productivity = _.sample(flow.productivitySizes[flow.workerProductivity[column.id]]);
       console.log(item.workRemaining + " work remaining on " + item.name + ", productivity of " + productivity);
+      if (flow.board.itemsInColumn(column).length > 1) {
+        if (productivity > 1) {
+          productivity -= 1;
+          console.log("productivity loss of 1 (now " + productivity + ") due to WIP size on " + column.name);
+        }
+      }
       let delta = item.workRemaining - productivity;
       if (delta < 0) {
         item.workRemaining = 0;
