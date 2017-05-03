@@ -28,7 +28,6 @@
       itemsInBatch: itemsInBatch,
       batchSatisfied: batchSatisfied,
       batchesForColumnId: batchesForColumnId,
-      batchStyle: batchStyle,
       valueForBatch: valueForBatch,
       batchById: batchById,
       resetItems: resetItems
@@ -64,9 +63,6 @@
       return items;
     }
 
-    function batchStyle(item) {
-      return "batch-" + item.batchId;
-    }
 
     function valueForBatch(batchId) {
       return _.sumBy(itemsInBatch(batchId), function(itm) { return itm.value; });

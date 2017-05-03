@@ -12,7 +12,9 @@ angular.module('flowMetrics.flow', [])
     flow.maxItemProgress = 1;
     flow.minItemProgress = 1;
     flow.timer = undefined;
+    flow.batchesOn = true;
 
+    flow.batchOptions = {'On': true, 'Off': false};
     flow.workSizeOptions = {'Uniform (4)': 0, 'Low (1)': 1, 'High (5-17)': 2};
 
     flow.workSizes = {0: [4], 1: [1], 2: [5, 7, 11, 17]};
@@ -112,7 +114,7 @@ angular.module('flowMetrics.flow', [])
             if (itemToPull) {
               let itemBatch = flow.board.batchById(itemToPull.batchId);
               // make sure the batch applies to this column
-              if (itemBatch && _.includes(itemBatch.columns, pullColumn.id)) {
+              if (flow.batchesOn && itemBatch && _.includes(itemBatch.columns, pullColumn.id)) {
                 let batchesSatisfied = flow.board.batchSatisfied(itemBatch, pullColumn.id);
                 if (batchesSatisfied) {
                   console.log("batches for " + itemToPull.name + " are satisfied - " + batchesSatisfied);
@@ -125,7 +127,6 @@ angular.module('flowMetrics.flow', [])
                 }
               }
               else {
-                console.log("no batches for " + itemToPull.name);
                 console.log(workColumn.name + " trying to pull " + itemToPull.name + " from " + pullColumn.name + "...");
                 flow.moveItem(itemToPull);
               }
@@ -234,7 +235,7 @@ angular.module('flowMetrics.flow', [])
       }
 
       if (toColumn.end) {
-        if (item.batchId) {
+        if (flow.batchesOn && item.batchId) {
           if (flow.board.batchSatisfied(flow.board.batchById(item.batchId), toColumn.id)) {
             flow.valueTimes.push({'timestamp': newTimestamp, "value": flow.board.valueForBatch(item.batchId)});
           }
