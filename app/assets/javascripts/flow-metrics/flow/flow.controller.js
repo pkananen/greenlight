@@ -12,12 +12,14 @@ angular.module('flowMetrics.flow', [])
     flow.minItemProgress = 1;
     flow.timer = undefined;
 
-    flow.sizeOptions = {'None (2)': 0, 'Low (1-3)': 1, 'High (1-17)': 2};
+    flow.workSizeOptions = {'Uniform (4)': 0, 'Low (1)': 1, 'High (5-17)': 2};
 
-    flow.workSizes = {0: [2, 2, 2, 2], 1: [1, 2, 2, 3], 2: [1, 3, 5, 7, 11, 17]};
+    flow.workSizes = {0: [4], 1: [1], 2: [5, 7, 11, 17]};
     flow.workVariability = 1;
 
-    flow.productivitySizes = {0: [2, 2, 2, 2], 1: [1, 2, 2, 3], 2: [1, 3, 5, 7, 11, 17]};
+    flow.productivitySizeOptions = {'Uniform (4)': 0, 'Low (1)': 1, 'High (5-17)': 2};
+    flow.workerProductivity = {2: 1, 4: 1, 6: 1, 8: 1, 10: 1};
+    flow.productivitySizes = {0: [4], 1: [1], 2: [5, 7, 11, 17]};
     flow.productivityVariability = 1;
 
     flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
@@ -83,7 +85,7 @@ angular.module('flowMetrics.flow', [])
         let workItem = _.first(_.sortBy(flow.board.itemsInColumn(workColumn), 'id'));
         if (workItem) {
           console.log("working...");
-          flow.doWork(workItem);
+          flow.doWork(workColumn, workItem);
           if (workItem.workRemaining == 0) {
             console.log("...done!");
             flow.moveItem(workItem);
@@ -125,8 +127,8 @@ angular.module('flowMetrics.flow', [])
       });
     };
 
-    flow.doWork = function(item) {
-      let productivity = _.sample(flow.productivitySizes[flow.productivityVariability]);
+    flow.doWork = function(column, item) {
+      let productivity = _.sample(flow.productivitySizes[flow.workerProductivity[column.id]]);
       console.log(item.workRemaining + " work remaining on " + item.name + ", productivity of " + productivity);
       let delta = item.workRemaining - productivity;
       if (delta < 0) {

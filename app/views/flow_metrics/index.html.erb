@@ -3,13 +3,13 @@
     <div class="page-header">
       <button class="btn btn-primary" ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
       <button class="btn btn-danger" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
-      <label>Work Variance</label><select ng-model="flow.workVariability" ng-options="k for (k, v) in flow.sizeOptions" ng-disabled="flow.running"></select>
-      <label>Productivity Variance</label><select ng-model="flow.productivityVariability" ng-options="k for (k, v) in flow.sizeOptions" ng-disabled="flow.running"></select>
+      <label>Size Variance</label><select ng-model="flow.workVariability" ng-options="k for (k, v) in flow.workSizeOptions" ng-disabled="flow.running"></select>
       <label>Value Delivered</label><span class="smaller-text" > {{ flow.valueDelivered() }}</span>
     </div>
     <div class="row">
       <div class="even-columns" ng-repeat="column in flow.board.columns" ng-class="flow.columnState(column)">
         <span><strong>{{column.name}}</strong></span>
+        <select ng-if="!column.idle" ng-model="flow.workerProductivity[column.id]" ng-options="k for (k, v) in flow.productivitySizeOptions"></select>
       </div>
     </div>
     <div class="row middle-blocks-height">
