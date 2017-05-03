@@ -15,5 +15,7 @@
 //= require lodash
 //= require moment
 //= require angular-moment
+//= require chart.js
+//= require angular-chart.js
 //= require flow-metrics.app
 //= require_self

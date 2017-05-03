@@ -13,6 +13,9 @@ angular.module('flowMetrics.flow', [])
     flow.minItemProgress = 1;
     flow.timer = undefined;
     flow.batchesOn = true;
+    flow.start = undefined;
+    flow.end = undefined;
+    flow.throughput = "-";
 
     flow.batchOptions = {'On': true, 'Off': false};
     flow.workSizeOptions = {'Uniform (4)': 0, 'Low (1)': 1, 'High (5-17)': 2};
@@ -27,6 +30,31 @@ angular.module('flowMetrics.flow', [])
 
     flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
     flow.wipSizes = {2: [], 4: [], 6: [], 8: [], 10: []};
+    $scope.labels = [0, 0];
+    $scope.data = [0, 0];
+    $scope.series = ['Values', 'Cumulative'];
+    $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
+    $scope.options = {
+      scales: {
+        xAxes: [{ type: 'time',
+                  time: {
+                    displayFormats: { 'millisecond': 'mm:ss', 'second': 'mm:ss', 'minute': 'mm:ss', 'hour': 'mm:ss', 'day': 'mm:ss', 'week': 'mm:ss', 'month': 'mm:ss', 'quarter': 'mm:ss', 'year': 'mm:ss' }
+                  }
+      }],
+        yAxes: [ { id: 'y-axis-1', type: 'linear', display: true, position: 'left', ticks: {min: 0, max: 1000}}  ]
+      }
+    };
+
+    flow.updateChart = function() {
+      $scope.labels = _.map(flow.valueTimes, function(cd) { return cd.timestamp; });
+      let values = _.map(flow.valueTimes, function(cd) { return cd.value; });
+      let cumulative = _.reduce(values, function(acc, n) {
+        acc.push((acc.length > 0 ? acc[acc.length - 1]: 0 ) + n);
+        return acc;
+      }, []);
+      $scope.data = cumulative;
+    }
+
     flow.setWorkSizes = function() {
       _.each(flow.board.items, function(itm) {
         let productivity = _.sample(flow.workSizes[flow.workVariability]);
@@ -65,10 +93,29 @@ angular.module('flowMetrics.flow', [])
       flow.valueTimes = [];
       flow.done = false;
       flow.running = false;
+      flow.start = undefined;
+      flow.end = undefined;
+      flow.throughput = "-";
+      $scope.labels = [0, 0];
+      $scope.data = [0, 0];
     };
+
+    flow.updateThroughput = function() {
+      if (flow.done) {
+        flow.throughput = (20 / ((flow.end - flow.start) / 1000)).toFixed(1);
+      }
+      else if (flow.running) {
+        let now = (new Date()).getTime();
+        flow.throughput = (flow.board.itemsInColumn(flow.board.columnById(11)).length / ((now - flow.start) / 1000)).toFixed(1);
+      }
+      else {
+        flow.throughput = "-";
+      }
+    }
 
     flow.play = function() {
       flow.running = true;
+      flow.start = (new Date()).getTime();
       flow.timer = $interval(flow.tickBoard, 800);
     };
 
@@ -87,6 +134,7 @@ angular.module('flowMetrics.flow', [])
         $interval.cancel(flow.timer);
         flow.done = true;
         flow.running = false;
+        flow.end = (new Date()).getTime();
         console.log("Done!");
       }
       else {
@@ -241,13 +289,16 @@ angular.module('flowMetrics.flow', [])
       }
 
       if (toColumn.end) {
+        flow.updateThroughput();
         if (flow.batchesOn && item.batchId) {
           if (flow.board.batchSatisfied(flow.board.batchById(item.batchId), toColumn.id)) {
             flow.valueTimes.push({'timestamp': newTimestamp, "value": flow.board.valueForBatch(item.batchId)});
+            flow.updateChart();
           }
         }
         else {
           flow.valueTimes.push({'timestamp': newTimestamp, "value": item.value});
+          flow.updateChart();
         }
       }
       console.log("...success!");

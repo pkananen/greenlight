@@ -9,6 +9,7 @@
   angular
     .module('flowMetrics', [
       'angularMoment',
+      'chart.js',
       'flowMetrics.board',
       'flowMetrics.services',
       'flowMetrics.flow'
