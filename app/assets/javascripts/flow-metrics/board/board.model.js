@@ -16,6 +16,7 @@
     return {
       columns: board.columns,
       columnById: columnById,
+      columnNames: columnNames,
       workColumns: workColumns,
       queueColumns: queueColumns,
       idleColumns: idleColumns,
@@ -124,11 +125,17 @@
       });
     };
 
-    function columnById(col_id) {
+    function columnById(colId) {
       return _.find(board.columns, function(col) {
-        return col.id == col_id;
+        return col.id == colId;
       });
     };
+
+    function columnNames(colIds) {
+      return _.map(colIds, function(colId) {
+        return columnById(colId).name;
+      });
+    }
 
     function itemsRemainingForColumn(column) {
       let columns = _.filter(board.columns, function(col) {

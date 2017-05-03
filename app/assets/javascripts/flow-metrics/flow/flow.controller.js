@@ -5,6 +5,7 @@ angular.module('flowMetrics.flow', [])
 
     flow.historicalTimes = [];
     flow.historicalQueues = [];
+    flow.historicalWip = [];
     flow.valueTimes = [];
     flow.done = false;
     flow.running = false;
@@ -23,6 +24,7 @@ angular.module('flowMetrics.flow', [])
     flow.productivityVariability = 1;
 
     flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
+    flow.wipSizes = {2: [], 4: [], 6: [], 8: [], 10: []};
 
     flow.resetBoard = function() {
       if (flow.running) { return; };
@@ -37,12 +39,19 @@ angular.module('flowMetrics.flow', [])
           flow.averageQueueSize(flow.board.columnById(5)),
           flow.averageQueueSize(flow.board.columnById(7)),
           flow.averageQueueSize(flow.board.columnById(9))]);
+        flow.historicalWip.push([
+          flow.averageWipSize(flow.board.columnById(2)),
+          flow.averageWipSize(flow.board.columnById(4)),
+          flow.averageWipSize(flow.board.columnById(6)),
+          flow.averageWipSize(flow.board.columnById(8)),
+          flow.averageWipSize(flow.board.columnById(10))]);
       }
       else {
         $interval.cancel(flow.timer);
       }
       flow.board.resetItems();
       flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
+      flow.wipSizes = {2: [], 4: [], 6: [], 8: [], 10: []};
       flow.maxItemProgress = 1;
       flow.minItemProgress = 1;
       flow.valueTimes = [];
@@ -74,6 +83,7 @@ angular.module('flowMetrics.flow', [])
       }
       else {
         flow.recordQueueSizes();
+        flow.recordWipSizes();
         flow.tickWorkers();
       }
     };
@@ -149,8 +159,24 @@ angular.module('flowMetrics.flow', [])
       });
     };
 
+    flow.recordWipSizes = function() {
+      _.each(flow.board.workColumns(), function(col) {
+        if (col.id >= flow.minItemProgress && col.id <= flow.maxItemProgress) {
+          let size = flow.board.itemsInColumn(col).length;
+          flow.wipSizes[col.id].push(size);
+        }
+      });
+    };
+
     flow.averageQueueSize = function(column) {
       let samples = flow.queueSizes[column.id];
+      let total = _.reduce(samples, function(memo, itm) { return memo + itm; }, 0);
+      if (samples.length == 0) { return; }
+      return (total / samples.length).toFixed(2);
+    };
+
+    flow.averageWipSize = function(column) {
+      let samples = flow.wipSizes[column.id];
       let total = _.reduce(samples, function(memo, itm) { return memo + itm; }, 0);
       if (samples.length == 0) { return; }
       return (total / samples.length).toFixed(2);

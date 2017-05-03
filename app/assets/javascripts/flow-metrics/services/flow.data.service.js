@@ -15,15 +15,15 @@
       function getColumns() {
         return [
           {name: 'Backlog', id: 1, start: true, end: false, idle: true, wipLimit: 99},
-          {name: 'Rqmts', id: 2, start: false, end: false, idle: false, wipLimit: 7},
-          {name: 'RF Desgn', id: 3, start: false, end: false, idle: true, wipLimit: 7},
-          {name: 'Design', id: 4, start: false, end: false, idle: false, wipLimit: 7},
-          {name: 'RF Dev', id: 5, start: false, end: false, idle: true, wipLimit: 7},
-          {name: 'Dev', id: 6, start: false, end: false, idle: false, wipLimit: 7},
-          {name: 'RF QA', id: 7, start: false, end: false, idle: true, wipLimit: 7},
-          {name: 'QA', id: 8, start: false, end: false, idle: false, wipLimit: 7},
-          {name: 'RF Ops', id: 9, start: false, end: false, idle: true, wipLimit: 7},
-          {name: 'Ops', id: 10, start: false, end: false, idle: false, wipLimit: 7},
+          {name: 'Rqmts', id: 2, start: false, end: false, idle: false, wipLimit: 2},
+          {name: 'RF Desgn', id: 3, start: false, end: false, idle: true, wipLimit: 6},
+          {name: 'Design', id: 4, start: false, end: false, idle: false, wipLimit: 2},
+          {name: 'RF Dev', id: 5, start: false, end: false, idle: true, wipLimit: 6},
+          {name: 'Dev', id: 6, start: false, end: false, idle: false, wipLimit: 2},
+          {name: 'RF QA', id: 7, start: false, end: false, idle: true, wipLimit: 6},
+          {name: 'QA', id: 8, start: false, end: false, idle: false, wipLimit: 2},
+          {name: 'RF Ops', id: 9, start: false, end: false, idle: true, wipLimit: 5},
+          {name: 'Ops', id: 10, start: false, end: false, idle: false, wipLimit: 2},
           {name: 'Done', id: 11, start: false, end: true, idle: true, wipLimit: 99}
         ];
       }
@@ -42,7 +42,7 @@
         return [
           {name: "W101", id: 1, columnId: 1, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: 0, batchId: 2, value: 100},
           {name: "W102", id: 2, columnId: 1, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: 0, value: 100},
-          {name: "W103", id: 3, columnId: 1, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: 0, batchId: 2, value: 0},
+          {name: "W103", id: 3, columnId: 1, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: 0, value: 50},
           {name: "W104", id: 4, columnId: 1, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: 0, batchId: 2, value: 100},
           {name: "W105", id: 5, columnId: 1, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: 0, batchId: 2, value: 0},
           {name: "W106", id: 6, columnId: 1, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: 0, batchId: 2, value: 0},

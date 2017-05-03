@@ -56,6 +56,23 @@
     </div>
     <div class="row">
       <table class="table table-striped">
+        <caption><strong>Average WIP</strong></caption>
+        <thead>
+          <th  class='col-xs-3' ng-repeat="col in flow.board.workColumns()">
+            {{col.name}}
+          </th>
+        </thead>
+        <tbody>
+          <tr>
+            <td  class='col-xs-3' ng-repeat="col in flow.board.workColumns()">
+              {{flow.averageWipSize(col)}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <table class="table table-striped">
         <caption><strong>Average Queue Sizes</strong></caption>
         <thead>
           <th  class='col-xs-3' ng-repeat="col in flow.board.queueColumns()">
@@ -86,6 +103,25 @@
                     <td class='col-xs-3'>{{(historical[1] / 1000).toFixed(2)}}</td>
                     <td class='col-xs-3'>{{(historical[2] / 1000).toFixed(2)}}</td>
                     <td class='col-xs-3'>{{historical[3]}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row">
+              <table class="table table-striped">
+                <caption><strong>Historical WIP</strong></caption>
+                <thead>
+                  <th class='col-xs-3' ng-repeat="col in flow.workColumns()">
+                    {{col.name}}
+                  </th>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="historical in flow.historicalWip">
+                    <td class='col-xs-3'>{{historical[0]}}</td>
+                    <td class='col-xs-3'>{{historical[1]}}</td>
+                    <td class='col-xs-3'>{{historical[2]}}</td>
+                    <td class='col-xs-3'>{{historical[3]}}</td>
+                    <td class='col-xs-3'>{{historical[4]}}</td>
                   </tr>
                 </tbody>
               </table>
