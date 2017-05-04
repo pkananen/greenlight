@@ -12,7 +12,7 @@ angular.module('flowMetrics.flow', [])
     flow.maxItemProgress = 1;
     flow.minItemProgress = 1;
     flow.timer = undefined;
-    flow.batchesOn = true;
+    flow.batchesOn = false;
     flow.start = undefined;
     flow.end = undefined;
     flow.throughput = "-";
