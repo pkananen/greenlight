@@ -67,9 +67,9 @@
               </tr>
               <tr>
                 <td><strong>Totals</strong></td>
+                <td>{{(flow.totalTime() / 1000).toFixed(2)}}</td>
                 <td>{{(flow.totalActiveTime() / 1000).toFixed(2)}}</td>
                 <td>{{(flow.totalIdleTime() / 1000).toFixed(2)}}</td>
-                <td>{{(flow.totalTime() / 1000).toFixed(2)}}</td>
                 <td>{{flow.totalIdleTimePercentage()}}</td>
               </tr>
             </tbody>
