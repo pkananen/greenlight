@@ -148,18 +148,21 @@ angular.module('flowMetrics.flow', [])
       let walkTheBoard = _.shuffle(flow.board.workColumns());
       _.each(walkTheBoard, function(workColumn) {
         console.log("ticking column " + workColumn.name);
-        let workItem = _.first(_.sortBy(flow.board.itemsInColumn(workColumn), 'id'));
-        if (workItem) {
-          console.log("working...");
-          flow.doWork(workColumn, workItem);
-          if (workItem.workRemaining == 0) {
-            console.log("...done!");
-            flow.moveItem(workItem);
+        _.each(flow.board.workersForColumn(workColumn), function(wrkr) {
+          console.log("ticking worker " + wrkr.name);
+          let workItem = _.first(flow.board.itemsForWorker(wrkr));
+          if (workItem) {
+            console.log("working...");
+            flow.doWork(workColumn, workItem);
+            if (workItem.workRemaining == 0) {
+              console.log("...done!");
+              flow.moveItem(workItem);
+            }
+            else {
+              console.log("...not done!");
+            }
           }
-          else {
-            console.log("...not done!");
-          }
-        }
+        });
         if (workColumn.id > 1) {
           while (flow.board.columnUnderWipLimit(workColumn)) {
 
@@ -248,7 +251,7 @@ angular.module('flowMetrics.flow', [])
       if (!col.idle || col.start || col.end) {
         return "block";
       }
-      else if (flow.board.itemsInColumn(col).length >= col.wipLimit) {
+      else if (!flow.board.columnUnderWipLimit(col)) {
         return "block-alert";
       }
       else {
@@ -261,12 +264,10 @@ angular.module('flowMetrics.flow', [])
       let fromColumn = flow.board.columnById(item.columnId);
       if (fromColumn.end) { return; }
 
-      // try to go to the next
-
       let toColumn = flow.board.columnById(item.columnId + 1);
       console.log("trying to move " + item.name + " from " + fromColumn.name + " to " + toColumn.name + "...");
       if (!flow.board.columnUnderWipLimit(toColumn)) {
-        console.log("...but " + toColumn.name + " is over WIP")
+        console.log("...but " + toColumn.name + " is over WIP or doesn't have enough workers")
         return;
       }
 
@@ -282,6 +283,16 @@ angular.module('flowMetrics.flow', [])
       }
       item.timestamp = newTimestamp;
       item.columnId = toColumn.id;
+      if (fromColumn.idle) {
+        let worker = flow.board.nextWorkerForColumn(toColumn);
+        item.workerId = worker.id;
+        worker.itemId = item.id;
+      }
+      else {
+        let worker = flow.board.workerById(item.workerId);
+        worker.itemId = undefined;
+        item.workerId = undefined;
+      }
       item.workRemaining = _.sample(flow.workSizes[flow.workVariability]);
       flow.maxItemProgress = _.max([flow.maxItemProgress, toColumn.id]);
       if (flow.board.itemsRemainingForColumn(fromColumn).length == 0) {

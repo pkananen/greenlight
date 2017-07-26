@@ -12,10 +12,12 @@
     board.columns = board.dataService.getColumns();
     board.items = board.dataService.getItems();
     board.batches = board.dataService.getBatches();
+    board.workers = board.dataService.getWorkers();
 
     return {
       columns: board.columns,
       columnById: columnById,
+      workerById: workerById,
       columnNames: columnNames,
       workColumns: workColumns,
       queueColumns: queueColumns,
@@ -30,7 +32,12 @@
       batchesForColumnId: batchesForColumnId,
       valueForBatch: valueForBatch,
       batchById: batchById,
-      resetItems: resetItems
+      resetItems: resetItems,
+      workers: board.workers,
+      workersForColumn: workersForColumn,
+      columnWipLimit: columnWipLimit,
+      itemsForWorker: itemsForWorker,
+      nextWorkerForColumn: nextWorkerForColumn
     }
 
     function resetItems() {
@@ -44,9 +51,30 @@
 
     function itemsInColumn(column) {
       let items =  _.filter(board.items, function(itm) {
-        return itm.columnId == column.id;
+        return itm.columnId === column.id;
       });
       return items;
+    }
+
+    function workersForColumn(column) {
+      let wrkrs =  _.filter(board.workers, function(wrkr) {
+        return column.id === wrkr.columnId;
+      });
+      return wrkrs;
+    }
+
+    function itemsForWorker(worker) {
+      let itms = _.filter(board.items, function(itm) {
+        return worker.id === itm.workerId;
+      });
+      return itms;
+    }
+
+    function nextWorkerForColumn(column) {
+      let wrkrs = _.sortBy(workersForColumn(column), function(wrkr) { return wrkr.id; });
+      return _.find(wrkrs, function(wrkr) {
+        return wrkr.workItemId == undefined;
+      });
     }
 
     function queueColumns() {
@@ -58,11 +86,10 @@
 
     function itemsInBatch(batchId) {
       let items = _.filter(board.items, function(itm) {
-        return itm.batchId == batchId;
+        return itm.batchId === batchId;
       });
       return items;
     }
-
 
     function valueForBatch(batchId) {
       return _.sumBy(itemsInBatch(batchId), function(itm) { return itm.value; });
@@ -99,6 +126,12 @@
     function batchById(batchId) {
       return _.find(board.batches, function(bch) {
         return bch.id == batchId;
+      });
+    }
+
+    function workerById(workerId) {
+      return _.find(board.workers, function(wrkr) {
+        return wrkr.id === workerId;
       });
     }
 
@@ -141,8 +174,17 @@
       return items;
     }
 
+    function columnWipLimit(column) {
+      if (column.idle) {
+        return column.wipLimit;
+      }
+      else {
+        return workersForColumn(column).length;
+      }
+    }
+
     function columnUnderWipLimit(column) {
-      return (itemsInColumn(column)).length < column.wipLimit;
+      return (itemsInColumn(column)).length < columnWipLimit(column);
     };
   }
 })();

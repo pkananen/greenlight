@@ -66,10 +66,18 @@ hr {
   border-right: 1px solid #ddd;
 }
 
+.worker {
+  padding: 4px;
+  border: 1px dashed #ddd;
+  width: 100%;
+  margin: 4px 0px;
+  text-align: center;
+}
+
 .batch {
   padding: 2px;
   border: 1px solid #ddd;
-  width: 100%;
+  width: 95%;
   margin: 4px 0px;
   text-align: center;
 }
