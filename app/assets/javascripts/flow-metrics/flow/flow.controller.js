@@ -4,6 +4,7 @@ angular.module('flowMetrics.flow', [])
     flow.board = FlowBoard;
 
     flow.historicalTimes = [];
+    flow.historicalWorkerTimes = [];
     flow.historicalQueues = [];
     flow.historicalWip = [];
     flow.valueTimes = [];
@@ -70,6 +71,11 @@ angular.module('flowMetrics.flow', [])
           flow.totalIdleTime(),
           flow.totalTime(),
           flow.totalIdleTimePercentage()]);
+        flow.historicalWorkerTimes.push([
+          flow.totalActiveWorkerTime(),
+          flow.totalIdleWorkerTime(),
+          flow.totalWorkerTime(),
+          flow.totalIdleWorkerTimePercentage()]);
         flow.historicalQueues.push([
           flow.averageQueueSize(flow.board.columnById(3)),
           flow.averageQueueSize(flow.board.columnById(5)),
@@ -145,10 +151,15 @@ angular.module('flowMetrics.flow', [])
     };
 
     flow.tickWorkers = function() {
+      let startForNewWorker = new Date();
       let walkTheBoard = _.shuffle(flow.board.workColumns());
       _.each(walkTheBoard, function(workColumn) {
         console.log("ticking column " + workColumn.name);
         _.each(flow.board.workersForColumn(workColumn), function(wrkr) {
+          if (wrkr.timestamp == 0) {
+            wrkr.timestamp = startForNewWorker;
+          }
+          let newTimestamp = new Date();
           console.log("ticking worker " + wrkr.name);
           let workItem = _.first(flow.board.itemsForWorker(wrkr));
           if (workItem) {
@@ -161,7 +172,18 @@ angular.module('flowMetrics.flow', [])
             else {
               console.log("...not done!");
             }
+            // log worker as being productive if they are in the scope of active work
+            // if (workColumn.id >= flow.minItemProgress && workColumn.id <= flow.maxItemProgress) {
+              wrkr.times['active'] = wrkr.times['active'] + (newTimestamp - wrkr.timestamp);
+            // }
           }
+          else {
+            // log worker as unproductive if they are in the scope of active work
+            // if (workColumn.id >= flow.minItemProgress && workColumn.id <= flow.maxItemProgress) {
+              wrkr.times['idle'] = wrkr.times['idle'] + (newTimestamp - wrkr.timestamp);
+            // }
+          }
+          wrkr.timestamp = newTimestamp;
         });
         if (workColumn.id > 1) {
           while (flow.board.columnUnderWipLimit(workColumn)) {
@@ -326,6 +348,17 @@ angular.module('flowMetrics.flow', [])
         }
     };
 
+    flow.idleWorkerTimePercentage = function(worker) {
+        let idleTime = worker.times['idle'];
+        let totalTime = worker.times['active'] + idleTime;
+        if (totalTime == 0) {
+          return "";
+        }
+        else {
+          return (Math.round((idleTime / totalTime) * 100)) + "%";
+        }
+    };
+
     flow.batchStyle = function(item) {
       if (flow.batchesOn) {
         if (item.batchId) {
@@ -340,6 +373,7 @@ angular.module('flowMetrics.flow', [])
       }
     }
 
+    // Item Times
     flow.totalActiveTime = function() {
       return _.reduce(flow.board.items, function(memo, itm) { return memo + itm.times['active']; }, 0);
     };
@@ -358,6 +392,28 @@ angular.module('flowMetrics.flow', [])
         }
         else {
           return (Math.round((flow.totalIdleTime() / flow.totalTime()) * 100)) + "%";
+        }
+    };
+
+    // Worker Times
+    flow.totalActiveWorkerTime = function() {
+      return _.reduce(flow.board.workers, function(memo, wrkr) { return memo + wrkr.times['active']; }, 0);
+    };
+
+    flow.totalIdleWorkerTime = function() {
+      return _.reduce(flow.board.workers, function(memo, wrkr) { return memo + wrkr.times['idle']; }, 0);
+    };
+
+    flow.totalWorkerTime = function() {
+      return flow.totalActiveWorkerTime() + flow.totalIdleWorkerTime();
+    };
+
+    flow.totalIdleWorkerTimePercentage = function() {
+        if (flow.totalWorkerTime() == 0) {
+          return "";
+        }
+        else {
+          return (Math.round((flow.totalIdleWorkerTime() / flow.totalWorkerTime()) * 100)) + "%";
         }
     };
 

@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <!-- WORK TIMES -->
+    <!-- ITEM WORK TIMES -->
     <div class="row col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading">Work Item Times</div>
@@ -91,6 +91,41 @@
         </div>
       </div>
     </div>
+
+    <!-- WORKER TIMES -->
+    <div class="row col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">Worker Times</div>
+        <div class="panel-body">
+          <table class="table table-striped">
+            <thead>
+              <th>Worker</th>
+              <th>Total Time</th>
+              <th>Active Time</th>
+              <th>Inactive Time</th>
+              <th>% Inactive</th>
+            </thead>
+            <tbody>
+              <tr ng-repeat="worker in flow.board.workers">
+                <td>{{worker.name}}</td>
+                <td>{{((worker.times['active'] + worker.times['idle']) / 1000).toFixed(2)}}</td>
+                <td>{{(worker.times['active'] / 1000).toFixed(2)}}</td>
+                <td>{{(worker.times['idle'] / 1000).toFixed(2)}}</td>
+                <td>{{flow.idleTimePercentage(worker)}}</td>
+              </tr>
+              <tr>
+                <td><strong>Totals</strong></td>
+                <td>{{(flow.totalWorkerTime() / 1000).toFixed(2)}}</td>
+                <td>{{(flow.totalActiveWorkerTime() / 1000).toFixed(2)}}</td>
+                <td>{{(flow.totalIdleWorkerTime() / 1000).toFixed(2)}}</td>
+                <td>{{flow.totalIdleWorkerTimePercentage()}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <div class="row col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading">Average WIP</div>
