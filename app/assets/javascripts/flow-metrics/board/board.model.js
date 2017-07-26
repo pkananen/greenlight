@@ -73,7 +73,7 @@
     function nextWorkerForColumn(column) {
       let wrkrs = _.sortBy(workersForColumn(column), function(wrkr) { return wrkr.id; });
       return _.find(wrkrs, function(wrkr) {
-        return wrkr.workItemId == undefined;
+        return wrkr.itemId == undefined;
       });
     }
 
