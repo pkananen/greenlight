@@ -17,6 +17,7 @@
         <select class="smaller-text" ng-if="!column.idle" ng-model="flow.workerProductivity[column.id]" ng-options="k for (k, v) in flow.productivitySizeOptions"></select>
       </div>
     </div>
+
     <div class="row col-md-12 middle-blocks-height no-margin-bottom">
       <div class="even-columns columns" ng-repeat="column in flow.board.columns">
         <div class="smaller-text worker" ng-if="!column.idle" ng-repeat="wrkr in flow.board.workersForColumn(column)">
@@ -25,11 +26,12 @@
           </span>
           <div class="smaller-text batch" ng-repeat="item in flow.board.itemsForWorker(wrkr)" ng-class="flow.batchStyle(item)">
             <span>
-              {{item.name}} - {{item.workRemaining}} <!--{{flow.batchesOn ? flow.board.batchById(item.batchId).columns: ''}} -->
+              {{item.name}} <!--{{flow.batchesOn ? flow.board.batchById(item.batchId).columns: ''}} -->
+              <div id="progressbar"><div id="progress" >{{item.workRemaining}}</div></div>
             </span>
           </div>
         </div>
-        <div class="smaller-text batch" ng-if="column.idle" ng-repeat="item in flow.board.itemsInColumn(column)" ng-class="flow.batchStyle(item)">
+        <div class="smaller-text batch-idle" ng-if="column.idle" ng-repeat="item in flow.board.itemsInColumn(column)" ng-class="flow.batchStyle(item)">
           <span>
             {{item.name}} - {{item.workRemaining}} <!--{{flow.batchesOn ? flow.board.batchById(item.batchId).columns: ''}} -->
           </span>

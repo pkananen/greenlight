@@ -77,9 +77,42 @@ hr {
 .batch {
   padding: 2px;
   border: 1px solid #ddd;
+  height: 34px;
+  margin: 4px 0px;
+  text-align: center;
+
+}
+
+.batch-idle {
+  padding: 2px;
+  border: 1px solid #ddd;
   width: 95%;
   margin: 4px 0px;
   text-align: center;
+}
+
+#progressbar {
+    width: 100%;
+    height: 17px;
+    clear: both;
+}
+
+#progress {
+    background: #A1C969; /*-- Color of the bar --*/
+    height: 15px;
+    width: 0%;
+    max-width: 100%;
+    float: left;
+    -webkit-animation: progress 5s 5 forwards;
+    -moz-animation: progress 5s 5 forwards;
+    -ms-animation: progress 5s 5 forwards;
+    animation: progress 5s 5 forwards;
+}
+
+@keyframes progress {
+    from { }
+
+    to { width: 100% }
 }
 
 .batch-0 {
@@ -120,6 +153,9 @@ hr {
 
 .no-margin-bottom {
   margin-bottom: 0px;
+}
+
+.progress-bar{
 }
 
 .no-padding {
