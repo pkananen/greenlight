@@ -17,6 +17,7 @@ angular.module('flowMetrics.flow', [])
     flow.start = undefined;
     flow.end = undefined;
     flow.throughput = "-";
+    flow.valueRate = "-";
 
     flow.batchOptions = {'On': true, 'Off': false};
     flow.workSizeOptions = {'Uniform (4)': 0, 'Low (1)': 1, 'High (5-17)': 2};
@@ -44,7 +45,7 @@ angular.module('flowMetrics.flow', [])
                   ticks: {min: 0.0, max: 100.0}
 
       }],
-        yAxes: [ { id: 'y-axis-1', type: 'linear', display: true, position: 'left', ticks: {min: 0, max: 1000}}  ]
+        yAxes: [ { id: 'y-axis-1', type: 'linear', display: true, position: 'left', ticks: {min: 0, max: 1600}}  ]
       }
     };
 
@@ -105,6 +106,7 @@ angular.module('flowMetrics.flow', [])
       flow.start = undefined;
       flow.end = undefined;
       flow.throughput = "-";
+      flow.valueRate = "-";
       $scope.labels = [0, 0];
       $scope.data = [0, 0];
     };
@@ -112,13 +114,16 @@ angular.module('flowMetrics.flow', [])
     flow.updateThroughput = function() {
       if (flow.done) {
         flow.throughput = (20 / ((flow.end - flow.start) / 1000)).toFixed(1);
+        flow.valueRate = (flow.valueDelivered() / ((flow.end - flow.start) / 1000)).toFixed(1);
       }
       else if (flow.running) {
         let now = (new Date()).getTime();
         flow.throughput = (flow.board.itemsInColumn(flow.board.columnById(11)).length / ((now - flow.start) / 1000)).toFixed(1);
+        flow.valueRate = (flow.valueDelivered() / ((now - flow.start) / 1000)).toFixed(1);
       }
       else {
         flow.throughput = "-";
+        flow.valueRate = "-";
       }
     }
 

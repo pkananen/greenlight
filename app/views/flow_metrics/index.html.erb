@@ -52,7 +52,11 @@
     <!-- VALUE CHART -->
     <div class="row col-md-12">
       <div class="panel panel-default">
-        <div class="panel-heading">Value Over Time</div>
+        <div class="panel-heading">
+          Value Over Time
+          <span class="float-right"><label>Value Rate </label><span> ${{ flow.valueRate }} / s</span></span>
+        </div>
+
         <div class="panel-body">
           <canvas id="valueChart" class="chart chart-line" chart-data="data" chart-labels="labels" chart-options="options" width="900" height="300" style="display:block; width: 900px; height: 300px;">
           </canvas>

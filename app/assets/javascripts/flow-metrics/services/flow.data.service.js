@@ -91,11 +91,11 @@
           {name: "W113", id: 13, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), value: 20},
           {name: "W114", id: 14, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), batchId: 4, value: 0},
           {name: "W115", id: 15, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), value: 30},
-          {name: "W116", id: 16, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), batchId: 4, value: 0},
-          {name: "W117", id: 17, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), batchId: 3, value: 50},
+          {name: "W116", id: 16, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), batchId: 4, value: 100},
+          {name: "W117", id: 17, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), batchId: 3, value: 450},
           {name: "W118", id: 18, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), batchId: 3, value: 0},
           {name: "W119", id: 19, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), batchId: 3, value: 40},
-          {name: "W120", id: 20, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), batchId: 3, value: 0},
+          {name: "W120", id: 20, columnId: 1, workerId: undefined, timestamp: 0, times: {active: 0, idle: 0}, workRemaining: _.sample([5, 7, 11, 17]), batchId: 3, value: 100},
         ];
       }
     }
