@@ -251,7 +251,7 @@ angular.module('flowMetrics.flow', [])
       console.log(item.workRemaining + " work remaining on " + item.name + ", productivity of " + productivity);
       if (flow.board.itemsInColumn(column).length > 1) {
         if (productivity > 1) {
-          productivity -= 1;
+          productivity -= 2;
           console.log("productivity loss of 1 (now " + productivity + ") due to WIP size on " + column.name);
         }
       }
