@@ -22,7 +22,7 @@ angular.module('flowMetrics.flow', [])
     flow.workSizeOptions = {'Uniform (4)': 0, 'Low (1)': 1, 'High (5-17)': 2};
 
     flow.workSizes = {0: [4], 1: [1], 2: [5, 7, 11, 17]};
-    flow.workVariability = 1;
+    flow.workVariability = 2;
 
     flow.workerCountOptions = {'1 Worker': 1, '2 Workers': 2, '3 Workers': 3, '4 Workers': 4};
     flow.workerCounts = {2: 1, 4: 1, 6: 1, 8: 1, 10: 1};
@@ -94,6 +94,7 @@ angular.module('flowMetrics.flow', [])
         $interval.cancel(flow.timer);
       }
       flow.board.resetItems();
+      flow.board.resetWorkers();
       flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
       flow.wipSizes = {2: [], 4: [], 6: [], 8: [], 10: []};
       flow.maxItemProgress = 1;
@@ -342,7 +343,6 @@ angular.module('flowMetrics.flow', [])
         worker.itemId = undefined;
         item.workerId = undefined;
       }
-      item.workRemaining = _.sample(flow.workSizes[flow.workVariability]);
       flow.maxItemProgress = _.max([flow.maxItemProgress, toColumn.id]);
       if (flow.board.itemsRemainingForColumn(fromColumn).length == 0) {
         flow.minItemProgress = toColumn.id;
@@ -360,6 +360,9 @@ angular.module('flowMetrics.flow', [])
           flow.valueTimes.push({'timestamp': newTimestamp, "value": item.value});
           flow.updateChart();
         }
+      }
+      else {
+        item.workRemaining = _.sample(flow.workSizes[flow.workVariability]);
       }
       console.log("...success!");
     };

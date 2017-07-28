@@ -5,7 +5,6 @@
       <div class="panel-body">
         <button class="btn btn-primary" ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
         <button class="btn btn-default" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
-        <span class="u-padding-left"><label>Size Variance</label><select class="u-margin-left" ng-change="flow.setWorkSizes()" ng-model="flow.workVariability" ng-options="k for (k, v) in flow.workSizeOptions" ng-disabled="flow.running"></select></span>
         <span class="u-padding-left"><label>Batches</label><select class="u-margin-left" ng-model="flow.batchesOn" ng-options="k for (k, v) in flow.batchOptions" ng-disabled="flow.running"></select></span>
         <span class="u-padding-left float-right"><label>Value Delivered $</label><span><strong>{{ flow.valueDelivered() }}</strong></span></span>
         <span class="float-right"><label>Throughput </label><span><strong> {{ flow.throughput }} / s</strong></span></span>
@@ -26,7 +25,7 @@
           </span>
           <div class="smaller-text batch" ng-repeat="item in flow.board.itemsForWorker(wrkr)" ng-class="flow.batchStyle(item)">
             <span>
-              {{item.name}} <!--{{flow.batchesOn ? flow.board.batchById(item.batchId).columns: ''}} -->
+              {{item.name}} ${{item.value}}
               <div id="progressbar">
                 <div id="progress-{{item.workRemaining}}"></div>
               </div>
@@ -35,7 +34,10 @@
         </div>
         <div class="smaller-text batch-idle" ng-if="column.idle" ng-repeat="item in flow.board.itemsInColumn(column)" ng-class="flow.batchStyle(item)">
           <span>
-            {{item.name}} - {{item.workRemaining}} <!--{{flow.batchesOn ? flow.board.batchById(item.batchId).columns: ''}} -->
+            {{item.name}} ${{item.value}}
+            <div ng-if="!column.end" id="progressbar">
+              <div id="progress-{{item.workRemaining}}"></div>
+            </div>
           </span>
         </div>
       </div>

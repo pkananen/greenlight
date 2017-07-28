@@ -32,6 +32,7 @@
       valueForBatch: valueForBatch,
       batchById: batchById,
       resetItems: resetItems,
+      resetWorkers: resetWorkers,
       workers: board.workers,
       allWorkers: allWorkers,
       workersForColumn: workersForColumn,
@@ -48,7 +49,14 @@
         itm.columnId = 1;
         itm.timestamp = 0;
         itm.times = {active: 0, idle: 0};
-        itm.workRemaining = 1;
+        itm.workRemaining = _.sample([5, 7, 11, 17]);
+      });
+    }
+
+    function resetWorkers() {
+      _.each(allWorkers(), function(wrkr) {
+        wrkr.timestamp = 0;
+        wrkr.times = {active: 0, idle: 0};
       });
     }
 
