@@ -22,7 +22,6 @@
       workColumns: workColumns,
       queueColumns: queueColumns,
       idleColumns: idleColumns,
-      columnUnderWipLimit: columnUnderWipLimit,
       items: board.items,
       itemsInColumn: itemsInColumn,
       activeItems: activeItems,
@@ -34,10 +33,14 @@
       batchById: batchById,
       resetItems: resetItems,
       workers: board.workers,
+      allWorkers: allWorkers,
       workersForColumn: workersForColumn,
-      columnWipLimit: columnWipLimit,
       itemsForWorker: itemsForWorker,
       nextWorkerForColumn: nextWorkerForColumn
+    }
+
+    function allWorkers() {
+      return _.flatten(_.values(board.workers));
     }
 
     function resetItems() {
@@ -57,10 +60,7 @@
     }
 
     function workersForColumn(column) {
-      let wrkrs =  _.filter(board.workers, function(wrkr) {
-        return column.id === wrkr.columnId;
-      });
-      return wrkrs;
+      return board.workers[column.id];
     }
 
     function itemsForWorker(worker) {
@@ -130,7 +130,7 @@
     }
 
     function workerById(workerId) {
-      return _.find(board.workers, function(wrkr) {
+      return _.find(allWorkers(), function(wrkr) {
         return wrkr.id === workerId;
       });
     }
@@ -174,17 +174,5 @@
       return items;
     }
 
-    function columnWipLimit(column) {
-      if (column.idle) {
-        return column.wipLimit;
-      }
-      else {
-        return workersForColumn(column).length;
-      }
-    }
-
-    function columnUnderWipLimit(column) {
-      return (itemsInColumn(column)).length < columnWipLimit(column);
-    };
   }
 })();

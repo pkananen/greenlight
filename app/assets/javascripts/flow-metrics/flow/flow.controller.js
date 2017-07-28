@@ -24,9 +24,9 @@ angular.module('flowMetrics.flow', [])
     flow.workSizes = {0: [4], 1: [1], 2: [5, 7, 11, 17]};
     flow.workVariability = 1;
 
-    flow.productivitySizeOptions = {'Uniform (4)': 0, 'Low (1)': 1, 'High (5-17)': 2};
-    flow.workerProductivity = {2: 1, 4: 1, 6: 1, 8: 1, 10: 1};
-    flow.productivitySizes = {0: [4], 1: [1], 2: [5, 7, 11, 17]};
+    flow.workerCountOptions = {'1 Worker': 1, '2 Workers': 2, '3 Workers': 3, '4 Workers': 4};
+    flow.workerCounts = {2: 1, 4: 1, 6: 1, 8: 1, 10: 1};
+    flow.productivitySizes = {0: [4], 1: [1], 2: [1, 3, 3, 5, 7]};
     flow.productivityVariability = 1;
 
     flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
@@ -40,7 +40,9 @@ angular.module('flowMetrics.flow', [])
         xAxes: [{ type: 'time',
                   time: {
                     displayFormats: { 'millisecond': 'mm:ss', 'second': 'mm:ss', 'minute': 'mm:ss', 'hour': 'mm:ss', 'day': 'mm:ss', 'week': 'mm:ss', 'month': 'mm:ss', 'quarter': 'mm:ss', 'year': 'mm:ss' }
-                  }
+                  },
+                  ticks: {min: 0.0, max: 100.0}
+
       }],
         yAxes: [ { id: 'y-axis-1', type: 'linear', display: true, position: 'left', ticks: {min: 0, max: 1000}}  ]
       }
@@ -150,12 +152,37 @@ angular.module('flowMetrics.flow', [])
       }
     };
 
+    flow.columnWipLimit = function(column) {
+      if (column.idle) {
+        return column.wipLimit;
+      }
+      else {
+        return flow.workerCounts[column.id];
+      }
+    }
+
+    flow.columnUnderWipLimit = function(column) {
+      return (flow.board.itemsInColumn(column)).length < flow.columnWipLimit(column);
+    }
+
+    flow.activeWorkersForColumn = function(column) {
+      return _.slice(flow.board.workersForColumn(column), 0, flow.workerCounts[column.id]);
+    }
+
+    flow.allActiveWorkers = function() {
+      let workers = _.map(flow.board.columns, function(col) {
+        return flow.activeWorkersForColumn(col);
+      });
+      return _.flatten(workers);
+    }
+
     flow.tickWorkers = function() {
       let startForNewWorker = new Date();
       let walkTheBoard = _.shuffle(flow.board.workColumns());
       _.each(walkTheBoard, function(workColumn) {
         console.log("ticking column " + workColumn.name);
-        _.each(flow.board.workersForColumn(workColumn), function(wrkr) {
+        for (i = 0; i < flow.workerCounts[workColumn.id]; i++) {
+          let wrkr = flow.board.workers[workColumn.id][i];
           if (wrkr.timestamp == 0) {
             wrkr.timestamp = startForNewWorker;
           }
@@ -184,9 +211,9 @@ angular.module('flowMetrics.flow', [])
             // }
           }
           wrkr.timestamp = newTimestamp;
-        });
+        }
         if (workColumn.id > 1) {
-          while (flow.board.columnUnderWipLimit(workColumn)) {
+          while (flow.columnUnderWipLimit(workColumn)) {
 
             let pullColumn = flow.board.columnById(workColumn.id - 1);
             let itemToPull = _.first(flow.board.itemsInColumn(pullColumn));
@@ -219,7 +246,7 @@ angular.module('flowMetrics.flow', [])
     };
 
     flow.doWork = function(column, item) {
-      let productivity = _.sample(flow.productivitySizes[flow.workerProductivity[column.id]]);
+      let productivity = _.sample(flow.productivitySizes[2]);
       console.log(item.workRemaining + " work remaining on " + item.name + ", productivity of " + productivity);
       if (flow.board.itemsInColumn(column).length > 1) {
         if (productivity > 1) {
@@ -273,7 +300,7 @@ angular.module('flowMetrics.flow', [])
       if (!col.idle || col.start || col.end) {
         return "block";
       }
-      else if (!flow.board.columnUnderWipLimit(col)) {
+      else if (!flow.columnUnderWipLimit(col)) {
         return "block-alert";
       }
       else {
@@ -288,7 +315,7 @@ angular.module('flowMetrics.flow', [])
 
       let toColumn = flow.board.columnById(item.columnId + 1);
       console.log("trying to move " + item.name + " from " + fromColumn.name + " to " + toColumn.name + "...");
-      if (!flow.board.columnUnderWipLimit(toColumn)) {
+      if (!flow.columnUnderWipLimit(toColumn)) {
         console.log("...but " + toColumn.name + " is over WIP or doesn't have enough workers")
         return;
       }
@@ -397,11 +424,11 @@ angular.module('flowMetrics.flow', [])
 
     // Worker Times
     flow.totalActiveWorkerTime = function() {
-      return _.reduce(flow.board.workers, function(memo, wrkr) { return memo + wrkr.times['active']; }, 0);
+      return _.reduce(flow.board.allWorkers(), function(memo, wrkr) { return memo + wrkr.times['active']; }, 0);
     };
 
     flow.totalIdleWorkerTime = function() {
-      return _.reduce(flow.board.workers, function(memo, wrkr) { return memo + wrkr.times['idle']; }, 0);
+      return _.reduce(flow.board.allWorkers(), function(memo, wrkr) { return memo + wrkr.times['idle']; }, 0);
     };
 
     flow.totalWorkerTime = function() {

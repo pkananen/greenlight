@@ -14,14 +14,38 @@
       };
 
       function getWorkers() {
-        return [
-          {name: 'Rq1', id: 1, columnId: 2, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
-          {name: 'Ds1', id: 2, columnId: 4, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
-          {name: 'Dv1', id: 3, columnId: 6, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
-          {name: 'Dv2', id: 4, columnId: 6, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
-          {name: 'Qa1', id: 5, columnId: 8, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
-          {name: 'Op1', id: 6, columnId: 10, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}}
-        ];
+        return {
+          2: [
+            {name: 'Rq1', id: 1, columnId: 2, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Rq2', id: 2, columnId: 2, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Rq3', id: 3, columnId: 2, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Rq4', id: 4, columnId: 2, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}}
+          ],
+          4: [
+            {name: 'Ds1', id: 5, columnId: 4, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Ds2', id: 6, columnId: 4, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Ds3', id: 7, columnId: 4, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Ds4', id: 8, columnId: 4, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}}
+          ],
+          6: [
+            {name: 'Dv1', id: 9, columnId: 6, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Dv2', id: 10, columnId: 6, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Dv3', id: 11, columnId: 6, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Dv4', id: 12, columnId: 6, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}}
+          ],
+          8: [
+            {name: 'Qa1', id: 13, columnId: 8, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Qa2', id: 14, columnId: 8, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Qa3', id: 15, columnId: 8, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Qa4', id: 16, columnId: 8, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}}
+          ],
+          10: [
+            {name: 'Op1', id: 17, columnId: 10, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Op2', id: 18, columnId: 10, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Op3', id: 19, columnId: 10, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}},
+            {name: 'Op4', id: 20, columnId: 10, itemId: undefined, timestamp: 0, times: {active: 0, idle: 0}}
+          ]
+        };
       }
 
       function getColumns() {
