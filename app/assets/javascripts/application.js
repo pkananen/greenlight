@@ -18,4 +18,7 @@
 //= require chart.js
 //= require angular-chart.js
 //= require flow-metrics.app
+//= require angular-tour-tpls.js
+//= require angular-tour.js
+//= require tour.js
 //= require_self
