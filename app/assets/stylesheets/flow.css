@@ -1,3 +1,8 @@
+body {
+  font-family: "Roboto", sans-serif !important;
+  background-color: #f2f5f8 !important;
+}
+
 h4 {
   margin-top: 25px;
 }
@@ -5,6 +10,85 @@ h4 {
   margin-bottom: 20px;
 }
 
+.questions {
+  padding: 15px;
+  color: #fff;
+}
+.questions:hover {
+  color: #fff;
+}
+
+.results {
+  border-radius: 3px;
+  width: 50px;
+  padding: 10px;
+  background-color: #eacd1f;
+}
+
+.worker-controls.block {
+  display: inline-block;
+  background-color: #fff;
+  margin-left: 5px;
+  border: none;
+}
+
+.column-header:first-child {
+  border-top-left-radius: 3px !important;
+}
+
+.column-header:last-child {
+  border-top-right-radius: 3px !important;
+}
+
+.btn {
+  border-radius: 2px !important;
+}
+
+.btn-primary {
+  background-color: #60bce4 !important;
+  border-color: #60bce4 !important;
+}
+
+.btn-primary:hover {
+  background-color: #7bddff !important;
+  border-color: #7bddff !important;
+}
+
+.column-header select {
+  color: black;
+}
+
+#gaslight-logo{
+  width: 130px;
+  padding: 0px;
+}
+
+.app-name {
+  margin-left: 10px !important;
+  color: #fff !important;
+}
+
+.navbar.navbar-default {
+  background-color: #2d2d2d;
+  border-radius: 0;
+  border: none;
+  height: 58px;
+  display: block;
+}
+
+.panel-heading {
+  border-radius: 3px !important;
+  background-color: #2d2d2d !important;
+  color: #dedede !important;
+}
+
+.column-header {
+  background-color: #2d2d2d !important;
+  color: #dedede !important;
+  font-weight: normal !important;
+  border: 0px !important;
+  text-align: center;
+}
 
 .row .row {
   margin-top: 10px;
@@ -40,7 +124,8 @@ hr {
 }
 
 .middle-blocks-height {
-  height: 862px;
+  height: 500px;
+  overflow-y: scroll;
 }
 
 .smaller-text {
@@ -55,11 +140,12 @@ hr {
     float: left;
     width: 9.09090909091%;
     overflow: visible;
-    height: 100%;
+    height: 200%;
 }
 
 .columns {
   border-left: 1px solid #ddd;
+  background-color: #fff;
 }
 
 .columns:last-child {
@@ -72,15 +158,15 @@ hr {
   width: 100%;
   margin: 4px 0px;
   text-align: center;
+  border-color: #2d2d2d;
 }
 
 .batch {
   padding: 2px;
-  border: 1px solid #ddd;
+  border: 1px solid #2d2d2d;
   height: 34px;
   margin: 4px 0px;
   text-align: center;
-
 }
 
 .batch-idle {
@@ -261,11 +347,19 @@ hr {
 }
 
 .column-header {
-  min-height: 72px;
+  min-height: auto;
 }
 
 .column-footer {
   min-height: 53px;
+  background-color: #2d2d2d !important;
+  color: #fff;
+  border: none;
+  text-align: center;
+}
+
+.column-footer select {
+  color: #000;
 }
 
 .flow-board {
@@ -290,4 +384,12 @@ hr {
 
 .u-margin-left {
   margin-left: 10px;
+}
+
+.u-margin-right {
+  margin-right: 10px !important;
+}
+
+.u-pad-none-top {
+  padding-top: 0px !important;
 }
