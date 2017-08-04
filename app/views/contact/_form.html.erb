@@ -1,0 +1,12 @@
+<%= form_for(@contact, url: contact_new_path) do |f| %>
+  <%= f.label :name, 'Name', class: 'u-block u-margin-left-md' %>
+  <%= f.text_field :name, class: 'u-block u-margin-left-md form-control' %>
+  <%= f.label :email, 'Email', class: 'u-block u-margin-left-md u-margin-top' %>
+  <%= f.text_field :email, class: 'u-block u-margin-left-md form-control' %>
+  <%= f.label :question, 'What would you like to know?', class: 'u-block u-margin-left-md u-margin-top' %>
+  <%= f.text_area :question, class: 'u-block u-margin-left-md form-control' %>
+  <div class="row">
+    <%= link_to "Cancel", flow_metrics_path, class: 'u-margin-left-button u-margin-top-md btn btn-default' %>
+    <%= f.button 'Send', class: 'u-margin-top-md btn btn-primary' %>
+  </div>
+<% end %>
