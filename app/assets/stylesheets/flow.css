@@ -10,6 +10,10 @@ h4 {
   margin-bottom: 20px;
 }
 
+.form-control {
+  width: 25% !important;
+}
+
 .questions {
   padding: 15px;
   color: #fff;
@@ -412,4 +416,20 @@ hr {
 
 .u-margin-top {
   margin-top: 5px;
+}
+
+.u-margin-top-md {
+  margin-top: 10px;
+}
+
+.u-margin-left-md {
+  margin-left: 250px;
+}
+
+.u-margin-left-button {
+  margin-left: 265px;
+}
+
+.u-block {
+  display: block;
 }
