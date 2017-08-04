@@ -4,16 +4,17 @@
       <div class="page-header panel panel-default">
         <div class="panel-heading">Flow Simulation Controls</div>
         <div class="panel-body u-pad-none-top">
-          <button class="btn btn-primary" ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
-          <button class="btn btn-default" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
-          <span class="u-padding-left"><label>Batches</label><select class="u-margin-left" ng-model="flow.batchesOn" ng-options="k for (k, v) in flow.batchOptions" ng-disabled="flow.running"></select></span>
+
+          <span><label>Batches</label><select class="u-margin-left u-margin-right" ng-model="flow.batchesOn" ng-options="k for (k, v) in flow.batchOptions" ng-disabled="flow.running"></select></span>
           <div class="row worker-controls u-margin-right" ng-if="!column.idle" ng-repeat="column in flow.board.columns" ng-class="flow.columnState(column)">
             <span><strong>{{column.name}}</strong></span>
             <select class="smaller-text" ng-if="!column.idle" ng-model="flow.workerCounts[column.id]" ng-options="k for (k, v) in flow.workerCountOptions"></select>
           </div>
-          <div class="row col-md-6">
-            <span class="u-padding-left results"><label>Value Delivered $</label><span>{{ flow.valueDelivered() }}</span></span>
-            <span class="u-padding-left results"><label>Throughput </label><span> {{ flow.throughput }} / s</span></span>
+          <div class="row col-md-10">
+            <span><label>Value Delivered</label><span class="results u-margin-left">${{ flow.valueDelivered() }}</span></span>
+            <span class="u-padding-left"><label>Throughput </label><span class="results u-margin-left"> {{ flow.throughput }} / s</span></span>
+            <button class="btn btn-primary u-margin-left-lg " ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
+            <button class="btn btn-default" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
           </div>
         </div>
       </div>
