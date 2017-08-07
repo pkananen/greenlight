@@ -222,7 +222,10 @@ angular.module('flowMetrics.flow', [])
           while (flow.columnUnderWipLimit(workColumn)) {
 
             let pullColumn = flow.board.columnById(workColumn.id - 1);
-            let itemToPull = _.first(flow.board.itemsInColumn(pullColumn));
+            let itemToPull = _.sample(flow.board.itemsInColumn(pullColumn));
+            if (pullColumn.start) {
+              itemToPull = _.first(flow.board.itemsInColumn(pullColumn));
+            }
             if (itemToPull) {
               let itemBatch = flow.board.batchById(itemToPull.batchId);
               // make sure the batch applies to this column
