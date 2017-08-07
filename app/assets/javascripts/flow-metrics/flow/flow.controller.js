@@ -40,6 +40,16 @@ angular.module('flowMetrics.flow', [])
     $scope.series = ['Values', 'Cumulative'];
     $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
     $scope.options = {
+    flow.workerTimesBarChartLabels = [];
+    flow.workerTimesBarChartSeries = ["Active Time", "Idle Time"];
+    flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
+    flow.workerTimesBarChartOptions = {
+      scales: {
+        xAxes: [{stacked: true}],
+        yAxes: [{stacked: true, ticks: {min: 0.0, max: 100.0}}]
+      }
+    };
+
       scales: {
         xAxes: [{ type: 'time',
                   time: {
@@ -60,6 +70,12 @@ angular.module('flowMetrics.flow', [])
         return acc;
       }, []);
       $scope.data = cumulative;
+      flow.workerTimesBarChartLabels = _.map(flow.allActiveWorkers(), function(wrkr) { return wrkr.name; });
+      let activeWorkerTime = _.map(flow.allActiveWorkers(), function(wrkr) { return (wrkr.times['active'] / 1000).toFixed(2); });
+      let idleWorkerTime = _.map(flow.allActiveWorkers(), function(wrkr) { return (wrkr.times['idle'] / 1000).toFixed(2); });
+      flow.workerTimesBarChartData = [activeWorkerTime, idleWorkerTime];
+      // WORKER TIMES
+
     }
 
     flow.setWorkSizes = function() {
@@ -112,6 +128,7 @@ angular.module('flowMetrics.flow', [])
       flow.valueRate = "-";
       $scope.labels = [0, 0];
       $scope.data = [0, 0];
+      flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
       flow.expectedNumInProgress = '-';
 
     };
