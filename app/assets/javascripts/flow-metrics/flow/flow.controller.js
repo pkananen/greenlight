@@ -18,6 +18,9 @@ angular.module('flowMetrics.flow', [])
     flow.end = undefined;
     flow.throughput = "-";
     flow.valueRate = "-";
+    flow.arrivalRate = 0;
+    flow.avgCycleTime = 0;
+    flow.expectedNumInProgress = '-';
 
     flow.batchOptions = {'On': true, 'Off': false};
     flow.workSizeOptions = {'Uniform (4)': 0, 'Low (1)': 1, 'High (5-17)': 2};
@@ -109,17 +112,29 @@ angular.module('flowMetrics.flow', [])
       flow.valueRate = "-";
       $scope.labels = [0, 0];
       $scope.data = [0, 0];
+      flow.expectedNumInProgress = '-';
+
     };
 
     flow.updateThroughput = function() {
       if (flow.done) {
         flow.throughput = (20 / ((flow.end - flow.start) / 1000)).toFixed(1);
         flow.valueRate = (flow.valueDelivered() / ((flow.end - flow.start) / 1000)).toFixed(1);
+        flow.expectedNumInProgress = "-";
       }
       else if (flow.running) {
         let now = (new Date()).getTime();
+        let elapsed = now - flow.start;
         flow.throughput = (flow.board.itemsInColumn(flow.board.columnById(11)).length / ((now - flow.start) / 1000)).toFixed(1);
-        flow.valueRate = (flow.valueDelivered() / ((now - flow.start) / 1000)).toFixed(1);
+        flow.valueRate = (flow.valueDelivered() / ((elapsed) / 1000)).toFixed(1);
+        // avg number in process is arrival rate * avg cycle_time
+        // arrival rate is number started per second
+        flow.arrivalRate = flow.board.itemsStarted().length / (elapsed);
+        let cycleTimes = _.map(flow.board.itemsCompleted(), function(itm) {
+          return itm.times['active'] + itm.times['idle'];
+        });
+        flow.avgCycleTime = _.sum(cycleTimes) / flow.board.itemsCompleted().length;
+        flow.expectedNumInProgress = Math.round(flow.arrivalRate * flow.avgCycleTime);
       }
       else {
         flow.throughput = "-";
