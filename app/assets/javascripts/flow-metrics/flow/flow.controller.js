@@ -35,11 +35,6 @@ angular.module('flowMetrics.flow', [])
 
     flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
     flow.wipSizes = {2: [], 4: [], 6: [], 8: [], 10: []};
-    $scope.labels = [0, 0];
-    $scope.data = [0, 0];
-    $scope.series = ['Values', 'Cumulative'];
-    $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
-    $scope.options = {
 
     flow.queueSizeLabels = _.map([3, 5, 7, 9], function(colId) { return flow.board.columnById(colId).name; });
     flow.queueSizeData = [0, 0, 0, 0];
@@ -69,6 +64,11 @@ angular.module('flowMetrics.flow', [])
       }
     };
 
+    flow.valueTimesLabels = [0, 0];
+    flow.valueTimesData = [0, 0];
+    flow.valueTimesSeries = ['Values', 'Cumulative'];
+    flow.valueTimesDatasetOverride = [{ yAxisID: 'y-axis-1' }];
+    flow.valueTimesOptions = {
       scales: {
         xAxes: [{ type: 'time',
                   time: {
@@ -77,18 +77,19 @@ angular.module('flowMetrics.flow', [])
                   ticks: {min: 0.0, max: 100.0}
 
       }],
-        yAxes: [ { id: 'y-axis-1', type: 'linear', display: true, position: 'left', ticks: {min: 0, max: 1600}}  ]
+        yAxes: [ { id: 'y-axis-1', type: 'linear', display: true, position: 'left', ticks: {min: 0, max: 2000}}  ]
       }
     };
 
     flow.updateChart = function() {
-      $scope.labels = _.map(flow.valueTimes, function(cd) { return cd.timestamp; });
+      // VALUE
+      flow.valueTimesLabels = _.map(flow.valueTimes, function(cd) { return cd.timestamp; });
       let values = _.map(flow.valueTimes, function(cd) { return cd.value; });
       let cumulative = _.reduce(values, function(acc, n) {
         acc.push((acc.length > 0 ? acc[acc.length - 1]: 0 ) + n);
         return acc;
       }, []);
-      $scope.data = cumulative;
+      flow.valueTimesData = cumulative;
       // QUEUE SIZES
       let avgQueueSizes = _.map([3, 5, 7, 9], function(col) { return flow.averageQueueSize(flow.board.columnById(col)); });
       let avgWipSizes = _.map([2, 4, 6, 8, 10], function(col) { return flow.averageWipSize(flow.board.columnById(col)); });
@@ -152,8 +153,8 @@ angular.module('flowMetrics.flow', [])
       flow.end = undefined;
       flow.throughput = "-";
       flow.valueRate = "-";
-      $scope.labels = [0, 0];
-      $scope.data = [0, 0];
+      flow.valueTimesLabels = [0, 0];
+      flow.valueTimesData = [0, 0];
       flow.queueSizeData = [0, 0, 0, 0];
       flow.wipSizeData = [0, 0, 0, 0, 0];
       flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
