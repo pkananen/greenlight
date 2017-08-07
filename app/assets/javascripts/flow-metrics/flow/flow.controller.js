@@ -272,19 +272,19 @@ angular.module('flowMetrics.flow', [])
     flow.recordQueueSizes = function() {
       _.each(flow.board.queueColumns(), function(col) {
         // don't record queues outside of the items in progress
-        if (col.id >= flow.minItemProgress && col.id <= flow.maxItemProgress) {
+        // if (col.id >= flow.minItemProgress && col.id <= flow.maxItemProgress) {
           let size = flow.board.itemsInColumn(col).length;
           flow.queueSizes[col.id].push(size);
-        }
+        // }
       });
     };
 
     flow.recordWipSizes = function() {
       _.each(flow.board.workColumns(), function(col) {
-        if (col.id >= flow.minItemProgress && col.id <= flow.maxItemProgress) {
+        // if (col.id >= flow.minItemProgress && col.id <= flow.maxItemProgress) {
           let size = flow.board.itemsInColumn(col).length;
           flow.wipSizes[col.id].push(size);
-        }
+        // }
       });
     };
 
@@ -368,7 +368,7 @@ angular.module('flowMetrics.flow', [])
         }
       }
       else {
-        item.workRemaining = _.sample(flow.workSizes[flow.workVariability]);
+        item.workRemaining = Math.round(_.sample(flow.workSizes[flow.workVariability]) * item.sizeFactor);
       }
       console.log("...success!");
     };
