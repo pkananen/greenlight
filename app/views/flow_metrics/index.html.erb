@@ -9,7 +9,7 @@
             <button class="btn btn-default u-padding-left" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
             <span class="u-padding-left"><label>Value Delivered</label><span class="results u-margin-left">${{ flow.valueDelivered() }}</span></span>
             <span class="u-padding-left"><label>Throughput: </label><span class="results u-margin-left"> {{ flow.throughput }} / s</span></span>
-            <span class="u-padding-left"><label>Expected In Progress: </label><span class="results u-margin-left"> {{ flow.expectedNumInProgress }}</span></span>
+            <span class="u-padding-left"><label>Expected In Progress: </label><span class="results u-margin-left">{{ (flow.arrivalRate * 1000).toFixed(2) }} * {{ (flow.avgCycleTime / 1000).toFixed(2) }} = {{ flow.expectedNumInProgress }}</span></span>
             <span class="u-padding-left"><label>Time Elapsed: </label><span class="results u-margin-left"> {{ (flow.elapsed / 1000).toFixed(1) }} s</span></span>
           </div>
           <div class="row col-md-12">
