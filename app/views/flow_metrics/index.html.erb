@@ -5,12 +5,12 @@
         <div class="panel-heading">Flow Simulation Controls</div>
         <div class="panel-body u-pad-none-top">
           <div class="row col-md-12">
-            <span><label>Value Delivered</label><span class="results u-margin-left">${{ flow.valueDelivered() }}</span></span>
+            <button class="btn btn-primary u-padding-left" ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
+            <button class="btn btn-default u-padding-left" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
+            <span class="u-padding-left"><label>Value Delivered</label><span class="results u-margin-left">${{ flow.valueDelivered() }}</span></span>
             <span class="u-padding-left"><label>Throughput: </label><span class="results u-margin-left"> {{ flow.throughput }} / s</span></span>
             <span class="u-padding-left"><label>Expected In Progress: </label><span class="results u-margin-left"> {{ flow.expectedNumInProgress }}</span></span>
             <span class="u-padding-left"><label>Time Elapsed: </label><span class="results u-margin-left"> {{ (flow.elapsed / 1000).toFixed(1) }} s</span></span>
-            <button class="btn btn-default u-padding-left float-right" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
-            <button class="btn btn-primary u-padding-left float-right" ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
           </div>
           <div class="row col-md-12">
             <span><label>Batches</label><select class="u-margin-left u-margin-right" ng-model="flow.batchesOn" ng-options="k for (k, v) in flow.batchOptions" ng-disabled="flow.running"></select></span>
