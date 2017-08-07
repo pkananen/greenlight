@@ -40,6 +40,25 @@ angular.module('flowMetrics.flow', [])
     $scope.series = ['Values', 'Cumulative'];
     $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
     $scope.options = {
+
+    flow.queueSizeLabels = _.map([3, 5, 7, 9], function(colId) { return flow.board.columnById(colId).name; });
+    flow.queueSizeData = [0, 0, 0, 0];
+    flow.queueSizeSeries = ['Avg Queue Sizes'];
+    flow.queueSizeOptions = {
+      scales: {
+        xAxes: [{stacked: true}],
+        yAxes: [{stacked: true, ticks: {min: 0, max: 5}}]
+      }
+    };
+    flow.wipSizeLabels = _.map([2, 4, 6, 8, 10], function(colId) { return flow.board.columnById(colId).name; });
+    flow.wipSizeData = [0, 0, 0, 0, 0];
+    flow.wipSizeSeries = ['Avg WIP Sizes'];
+    flow.wipSizeOptions = {
+      scales: {
+        xAxes: [{stacked: true}],
+        yAxes: [{stacked: true, ticks: {min: 0, max: 5}}]
+      }
+    };
     flow.workerTimesBarChartLabels = [];
     flow.workerTimesBarChartSeries = ["Active Time", "Idle Time"];
     flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
@@ -70,6 +89,13 @@ angular.module('flowMetrics.flow', [])
         return acc;
       }, []);
       $scope.data = cumulative;
+      // QUEUE SIZES
+      let avgQueueSizes = _.map([3, 5, 7, 9], function(col) { return flow.averageQueueSize(flow.board.columnById(col)); });
+      let avgWipSizes = _.map([2, 4, 6, 8, 10], function(col) { return flow.averageWipSize(flow.board.columnById(col)); });
+      let queuesSizeData = _.map([3, 5, 7, 9], function(col) { return flow.queueSizes[col]; });
+      let wipSizeData = _.map([2, 4, 6, 8, 10], function(col) { return flow.wipSizes[col]; });
+      flow.queueSizeData = [avgQueueSizes];
+      flow.wipSizeData = [avgWipSizes];
       flow.workerTimesBarChartLabels = _.map(flow.allActiveWorkers(), function(wrkr) { return wrkr.name; });
       let activeWorkerTime = _.map(flow.allActiveWorkers(), function(wrkr) { return (wrkr.times['active'] / 1000).toFixed(2); });
       let idleWorkerTime = _.map(flow.allActiveWorkers(), function(wrkr) { return (wrkr.times['idle'] / 1000).toFixed(2); });
@@ -128,6 +154,8 @@ angular.module('flowMetrics.flow', [])
       flow.valueRate = "-";
       $scope.labels = [0, 0];
       $scope.data = [0, 0];
+      flow.queueSizeData = [0, 0, 0, 0];
+      flow.wipSizeData = [0, 0, 0, 0, 0];
       flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
       flow.expectedNumInProgress = '-';
 

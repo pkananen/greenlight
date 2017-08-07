@@ -50,6 +50,34 @@
       </div>
     </div>
 
+    <!-- QUEUE SIZES -->
+    <div class="row col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Average Queue Sizes
+        </div>
+
+        <div class="panel-body">
+          <canvas id="queueSizeChart" class="chart chart-bar" chart-data="flow.queueSizeData" chart-labels="flow.queueSizeLabels" chart-options="flow.queueSizeOptions" width="900" height="300" style="display:block; width: 900px; height: 300px;">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIP SIZES -->
+    <div class="row col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Average Worker WIP
+        </div>
+
+        <div class="panel-body">
+          <canvas id="wipSizeChart" class="chart chart-bar" chart-data="flow.wipSizeData" chart-labels="flow.wipSizeLabels" chart-options="flow.wipSizeOptions" width="900" height="300" style="display:block; width: 900px; height: 300px;">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
     <!-- VALUE CHART -->
     <div class="row col-md-12">
       <div class="panel panel-default">
