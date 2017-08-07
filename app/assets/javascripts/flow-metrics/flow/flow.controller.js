@@ -54,6 +54,17 @@ angular.module('flowMetrics.flow', [])
         yAxes: [{stacked: true, ticks: {min: 0, max: 5}}]
       }
     };
+
+    flow.cycleTimeBarChartLabels = _.map(flow.board.items, function(itm) { return itm.name; });
+    flow.cycleTimeBarChartSeries = ["Active Time", "Idle Time"];
+    flow.cycleTimeBarChartData = [[0], [0]];
+    flow.cycleTimeBarChartOptions = {
+      scales: {
+        xAxes: [{stacked: true}],
+        yAxes: [{stacked: true, ticks: {min: 0, max: 80}}]
+      }
+    };
+
     flow.workerTimesBarChartLabels = [];
     flow.workerTimesBarChartSeries = ["Active Time", "Idle Time"];
     flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
@@ -90,6 +101,11 @@ angular.module('flowMetrics.flow', [])
         return acc;
       }, []);
       flow.valueTimesData = cumulative;
+      // CYCLE TIMES
+      let activeTimes = _.map(flow.board.items, function(itm) { return itm.times['active'] / 1000 ; });
+      let idleTimes = _.map(flow.board.items, function(itm) { return itm.times['idle'] / 1000; });
+      flow.cycleTimeBarChartData = [activeTimes, idleTimes];
+
       // QUEUE SIZES
       let avgQueueSizes = _.map([3, 5, 7, 9], function(col) { return flow.averageQueueSize(flow.board.columnById(col)); });
       let avgWipSizes = _.map([2, 4, 6, 8, 10], function(col) { return flow.averageWipSize(flow.board.columnById(col)); });
@@ -101,6 +117,7 @@ angular.module('flowMetrics.flow', [])
       let activeWorkerTime = _.map(flow.allActiveWorkers(), function(wrkr) { return (wrkr.times['active'] / 1000).toFixed(2); });
       let idleWorkerTime = _.map(flow.allActiveWorkers(), function(wrkr) { return (wrkr.times['idle'] / 1000).toFixed(2); });
       flow.workerTimesBarChartData = [activeWorkerTime, idleWorkerTime];
+      flow.cycleTimeBarChartLabels = _.map(flow.board.items, function(itm) { return itm.name + "-" + itm.workCompleted; });
       // WORKER TIMES
 
     }
@@ -155,6 +172,7 @@ angular.module('flowMetrics.flow', [])
       flow.valueRate = "-";
       flow.valueTimesLabels = [0, 0];
       flow.valueTimesData = [0, 0];
+      flow.cycleTimeBarChartData = [[0], [0]];
       flow.queueSizeData = [0, 0, 0, 0];
       flow.wipSizeData = [0, 0, 0, 0, 0];
       flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
