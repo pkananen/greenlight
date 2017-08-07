@@ -4,17 +4,20 @@
       <div class="page-header panel panel-default">
         <div class="panel-heading">Flow Simulation Controls</div>
         <div class="panel-body u-pad-none-top">
-
-          <span><label>Batches</label><select class="u-margin-left u-margin-right" ng-model="flow.batchesOn" ng-options="k for (k, v) in flow.batchOptions" ng-disabled="flow.running"></select></span>
-          <div class="row worker-controls u-margin-right" ng-if="!column.idle" ng-repeat="column in flow.board.columns" ng-class="flow.columnState(column)">
-            <span><strong>{{column.name}}</strong></span>
-            <select class="smaller-text" ng-if="!column.idle" ng-model="flow.workerCounts[column.id]" ng-options="k for (k, v) in flow.workerCountOptions"></select>
-          </div>
-          <div class="row col-md-10">
+          <div class="row col-md-12">
             <span><label>Value Delivered</label><span class="results u-margin-left">${{ flow.valueDelivered() }}</span></span>
-            <span class="u-padding-left"><label>Throughput </label><span class="results u-margin-left"> {{ flow.throughput }} / s</span></span>
-            <button class="btn btn-primary u-margin-left-lg " ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
-            <button class="btn btn-default" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
+            <span class="u-padding-left"><label>Throughput: </label><span class="results u-margin-left"> {{ flow.throughput }} / s</span></span>
+            <span class="u-padding-left"><label>Expected In Progress: </label><span class="results u-margin-left"> {{ flow.expectedNumInProgress }}</span></span>
+            <span class="u-padding-left"><label>Time Elapsed: </label><span class="results u-margin-left"> {{ (flow.elapsed / 1000).toFixed(1) }} s</span></span>
+            <button class="btn btn-default u-padding-left float-right" ng-click="flow.resetBoard()" ng-disabled="!flow.done">Reset</button>
+            <button class="btn btn-primary u-padding-left float-right" ng-click="flow.play()" ng-disabled="flow.running || flow.done">Start</button>
+          </div>
+          <div class="row col-md-12">
+            <span><label>Batches</label><select class="u-margin-left u-margin-right" ng-model="flow.batchesOn" ng-options="k for (k, v) in flow.batchOptions" ng-disabled="flow.running"></select></span>
+            <div class="row worker-controls u-margin-right" ng-if="!column.idle" ng-repeat="column in flow.board.columns" ng-class="flow.columnState(column)">
+              <span><strong>{{column.name}}</strong></span>
+              <select class="smaller-text" ng-if="!column.idle" ng-model="flow.workerCounts[column.id]" ng-options="k for (k, v) in flow.workerCountOptions"></select>
+            </div>
           </div>
         </div>
       </div>
@@ -70,34 +73,6 @@
       </div>
     </div>
 
-    <!-- QUEUE SIZES -->
-    <div class="row col-md-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          Average Queue Sizes
-        </div>
-
-        <div class="panel-body">
-          <canvas id="queueSizeChart" class="chart chart-bar" chart-data="flow.queueSizeData" chart-labels="flow.queueSizeLabels" chart-options="flow.queueSizeOptions" width="900" height="300" style="display:block; width: 900px; height: 300px;">
-          </canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- WIP SIZES -->
-    <div class="row col-md-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          Average Worker WIP
-        </div>
-
-        <div class="panel-body">
-          <canvas id="wipSizeChart" class="chart chart-bar" chart-data="flow.wipSizeData" chart-labels="flow.wipSizeLabels" chart-options="flow.wipSizeOptions" width="900" height="300" style="display:block; width: 900px; height: 300px;">
-          </canvas>
-        </div>
-      </div>
-    </div>
-
     <!-- VALUE CHART -->
     <div class="row col-md-12">
       <div class="panel panel-default">
@@ -127,118 +102,20 @@
       </div>
     </div>
 
-
-    <!-- ITEM WORK TIMES -->
+    <!-- QUEUE & WIP SIZES -->
     <div class="row col-md-12">
       <div class="panel panel-default">
-        <div class="panel-heading">Work Item Times</div>
+        <div class="panel-heading">
+          Average Queue and WIP Sizes
+        </div>
+
         <div class="panel-body">
-          <table class="table table-striped">
-            <thead>
-              <th>Item</th>
-              <th>Cycle Time</th>
-              <th>Active Time</th>
-              <th>Inactive Time</th>
-              <th>% Inactive</th>
-            </thead>
-            <tbody>
-              <tr ng-repeat="widget in flow.board.items">
-                <td>{{widget.name}}</td>
-                <td>{{((widget.times['active'] + widget.times['idle']) / 1000).toFixed(2)}}</td>
-                <td>{{(widget.times['active'] / 1000).toFixed(2)}}</td>
-                <td>{{(widget.times['idle'] / 1000).toFixed(2)}}</td>
-                <td>{{flow.idleTimePercentage(widget)}}</td>
-              </tr>
-              <tr>
-                <td><strong>Totals</strong></td>
-                <td>{{(flow.totalTime() / 1000).toFixed(2)}}</td>
-                <td>{{(flow.totalActiveTime() / 1000).toFixed(2)}}</td>
-                <td>{{(flow.totalIdleTime() / 1000).toFixed(2)}}</td>
-                <td>{{flow.totalIdleTimePercentage()}}</td>
-              </tr>
-            </tbody>
-          </table>
+          <canvas id="queueWipSizeChart" class="chart chart-bar" chart-data="flow.queueWipSizeData" chart-labels="flow.queueWipSizeLabels" chart-options="flow.queueWipSizeOptions" width="900" height="300" style="display:block; width: 900px; height: 300px;">
+          </canvas>
         </div>
       </div>
     </div>
 
-    <!-- WORKER TIMES -->
-    <div class="row col-md-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">Worker Times</div>
-        <div class="panel-body">
-          <table class="table table-striped">
-            <thead>
-              <th>Worker</th>
-              <th>Total Time</th>
-              <th>Active Time</th>
-              <th>Inactive Time</th>
-              <th>% Inactive</th>
-            </thead>
-            <tbody>
-              <tr ng-repeat="worker in flow.allActiveWorkers()">
-                <td>{{worker.name}}</td>
-                <td>{{((worker.times['active'] + worker.times['idle']) / 1000).toFixed(2)}}</td>
-                <td>{{(worker.times['active'] / 1000).toFixed(2)}}</td>
-                <td>{{(worker.times['idle'] / 1000).toFixed(2)}}</td>
-                <td>{{flow.idleTimePercentage(worker)}}</td>
-              </tr>
-              <tr>
-                <td><strong>Totals</strong></td>
-                <td>{{(flow.totalWorkerTime() / 1000).toFixed(2)}}</td>
-                <td>{{(flow.totalActiveWorkerTime() / 1000).toFixed(2)}}</td>
-                <td>{{(flow.totalIdleWorkerTime() / 1000).toFixed(2)}}</td>
-                <td>{{flow.totalIdleWorkerTimePercentage()}}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="row col-md-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">Average WIP</div>
-        <div class="panel-body">
-          <table class="table table-striped">
-            <thead>
-              <th  class='col-xs-3' ng-repeat="col in flow.board.workColumns()">
-                {{col.name}}
-              </th>
-            </thead>
-            <tbody>
-              <tr>
-                <td  class='col-xs-3' ng-repeat="col in flow.board.workColumns()">
-                  {{flow.averageWipSize(col)}}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="row col-md-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">Average Queue Sizes</div>
-        <div class="panel-body">
-          <table class="table table-striped">
-            <thead>
-              <th  class='col-xs-3' ng-repeat="col in flow.board.queueColumns()">
-                {{col.name}}
-              </th>
-            </thead>
-            <tbody>
-              <tr>
-                <td  class='col-xs-3' ng-repeat="col in flow.board.queueColumns()">
-                  {{flow.averageQueueSize(col)}}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
     <!--<div class="row">
       <table class="table table-striped">
         <caption><strong>Historical Times</strong></caption>

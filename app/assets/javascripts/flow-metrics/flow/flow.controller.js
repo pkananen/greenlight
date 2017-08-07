@@ -20,6 +20,7 @@ angular.module('flowMetrics.flow', [])
     flow.valueRate = "-";
     flow.arrivalRate = 0;
     flow.avgCycleTime = 0;
+    flow.elapsed = 0;
     flow.expectedNumInProgress = '-';
 
     flow.batchOptions = {'On': true, 'Off': false};
@@ -33,22 +34,13 @@ angular.module('flowMetrics.flow', [])
     flow.productivitySizes = {0: [4], 1: [1], 2: [1, 3, 3, 5, 7]};
     flow.productivityVariability = 1;
 
-    flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
+    flow.queueSizes = {2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10:[]};
     flow.wipSizes = {2: [], 4: [], 6: [], 8: [], 10: []};
 
-    flow.queueSizeLabels = _.map([3, 5, 7, 9], function(colId) { return flow.board.columnById(colId).name; });
-    flow.queueSizeData = [0, 0, 0, 0];
-    flow.queueSizeSeries = ['Avg Queue Sizes'];
-    flow.queueSizeOptions = {
-      scales: {
-        xAxes: [{stacked: true}],
-        yAxes: [{stacked: true, ticks: {min: 0, max: 5}}]
-      }
-    };
-    flow.wipSizeLabels = _.map([2, 4, 6, 8, 10], function(colId) { return flow.board.columnById(colId).name; });
-    flow.wipSizeData = [0, 0, 0, 0, 0];
-    flow.wipSizeSeries = ['Avg WIP Sizes'];
-    flow.wipSizeOptions = {
+    flow.queueWipSizeLabels = _.map([2, 3, 4, 5, 6, 7, 8, 9, 10], function(colId) { return flow.board.columnById(colId).name; });
+    flow.queueWipSizeData = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    flow.queueWipSizeSeries = ['Avg Queue and WIP Sizes'];
+    flow.queueWipSizeOptions = {
       scales: {
         xAxes: [{stacked: true}],
         yAxes: [{stacked: true, ticks: {min: 0, max: 5}}]
@@ -106,13 +98,16 @@ angular.module('flowMetrics.flow', [])
       let idleTimes = _.map(flow.board.items, function(itm) { return itm.times['idle'] / 1000; });
       flow.cycleTimeBarChartData = [activeTimes, idleTimes];
 
-      // QUEUE SIZES
-      let avgQueueSizes = _.map([3, 5, 7, 9], function(col) { return flow.averageQueueSize(flow.board.columnById(col)); });
-      let avgWipSizes = _.map([2, 4, 6, 8, 10], function(col) { return flow.averageWipSize(flow.board.columnById(col)); });
-      let queuesSizeData = _.map([3, 5, 7, 9], function(col) { return flow.queueSizes[col]; });
-      let wipSizeData = _.map([2, 4, 6, 8, 10], function(col) { return flow.wipSizes[col]; });
-      flow.queueSizeData = [avgQueueSizes];
-      flow.wipSizeData = [avgWipSizes];
+      // QUEUE & WIP SIZES
+      let avgQueueWipSizes = _.map([2, 3, 4, 5, 6, 7, 8, 9, 10], function(col) {
+        if ((col % 2) == 0) {
+          return flow.averageWipSize(flow.board.columnById(col));
+        }
+        else {
+          return flow.averageQueueSize(flow.board.columnById(col));
+        }
+      });
+      flow.queueWipSizeData = [avgQueueWipSizes];
       flow.workerTimesBarChartLabels = _.map(flow.allActiveWorkers(), function(wrkr) { return wrkr.name; });
       let activeWorkerTime = _.map(flow.allActiveWorkers(), function(wrkr) { return (wrkr.times['active'] / 1000).toFixed(2); });
       let idleWorkerTime = _.map(flow.allActiveWorkers(), function(wrkr) { return (wrkr.times['idle'] / 1000).toFixed(2); });
@@ -159,7 +154,7 @@ angular.module('flowMetrics.flow', [])
       }
       flow.board.resetItems();
       flow.board.resetWorkers();
-      flow.queueSizes = {3: [], 5: [], 7: [], 9: []};
+      flow.queueSizes = {2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10:[]};
       flow.wipSizes = {2: [], 4: [], 6: [], 8: [], 10: []};
       flow.maxItemProgress = 1;
       flow.minItemProgress = 1;
@@ -173,10 +168,10 @@ angular.module('flowMetrics.flow', [])
       flow.valueTimesLabels = [0, 0];
       flow.valueTimesData = [0, 0];
       flow.cycleTimeBarChartData = [[0], [0]];
-      flow.queueSizeData = [0, 0, 0, 0];
-      flow.wipSizeData = [0, 0, 0, 0, 0];
+      flow.queueWipSizeData = [0, 0, 0, 0, 0, 0, 0, 0, 0];
       flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
       flow.expectedNumInProgress = '-';
+      flow.elapsed = 0;
 
     };
 
@@ -188,12 +183,12 @@ angular.module('flowMetrics.flow', [])
       }
       else if (flow.running) {
         let now = (new Date()).getTime();
-        let elapsed = now - flow.start;
+        flow.elapsed = now - flow.start;
         flow.throughput = (flow.board.itemsInColumn(flow.board.columnById(11)).length / ((now - flow.start) / 1000)).toFixed(1);
-        flow.valueRate = (flow.valueDelivered() / ((elapsed) / 1000)).toFixed(1);
+        flow.valueRate = (flow.valueDelivered() / ((flow.elapsed) / 1000)).toFixed(1);
         // avg number in process is arrival rate * avg cycle_time
         // arrival rate is number started per second
-        flow.arrivalRate = flow.board.itemsStarted().length / (elapsed);
+        flow.arrivalRate = flow.board.itemsStarted().length / (flow.elapsed);
         let cycleTimes = _.map(flow.board.itemsCompleted(), function(itm) {
           return itm.times['active'] + itm.times['idle'];
         });
@@ -203,6 +198,7 @@ angular.module('flowMetrics.flow', [])
       else {
         flow.throughput = "-";
         flow.valueRate = "-";
+        flow.expectedNumInProgress = "-";
       }
     }
 
@@ -223,6 +219,8 @@ angular.module('flowMetrics.flow', [])
     }
 
     flow.tickBoard = function() {
+      let newTimestamp = new Date();
+      flow.elapsed = newTimestamp - flow.start;
       if (flow.board.itemsInColumn(flow.board.columnById('11')).length == flow.board.items.length) {
         $interval.cancel(flow.timer);
         flow.done = true;
