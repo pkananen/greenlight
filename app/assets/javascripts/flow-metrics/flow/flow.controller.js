@@ -303,6 +303,11 @@ angular.module('flowMetrics.flow', [])
             if (pullColumn.start) {
               itemToPull = _.first(flow.board.itemsInColumn(pullColumn));
             }
+            // with heavy queues, lose a cycle 25% of the time
+            if ((flow.board.itemsInColumn(pullColumn).length > 1) && (_.sample([1, 2, 3, 4]) == 4)) {
+              console.log("heavy WIP in Queue " + pullColumn.id + ", randomly lost a work cycle");
+              break;
+            }
             if (itemToPull) {
               let itemBatch = flow.board.batchById(itemToPull.batchId);
               // make sure the batch applies to this column
