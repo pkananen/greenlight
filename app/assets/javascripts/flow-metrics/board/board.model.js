@@ -27,6 +27,8 @@
       activeItems: activeItems,
       itemsRemainingForColumn: itemsRemainingForColumn,
       itemsInBatch: itemsInBatch,
+      itemsStarted: itemsStarted,
+      itemsCompleted: itemsCompleted,
       batchSatisfied: batchSatisfied,
       batchesForColumnId: batchesForColumnId,
       valueForBatch: valueForBatch,
@@ -50,6 +52,7 @@
         itm.timestamp = 0;
         itm.times = {active: 0, idle: 0};
         itm.workRemaining = _.sample([5, 7, 11, 17]);
+        itm.workCompleted = 0;
       });
     }
 
@@ -161,6 +164,18 @@
         return !column.idle;
       });
     };
+
+    function itemsStarted() {
+      return _.filter(board.items, function(itm) {
+        return itm.columnId > 1;
+      });
+    }
+
+    function itemsCompleted() {
+      return _.filter(board.items, function(itm) {
+        return itm.columnId == 11;
+      });
+    }
 
     function columnById(colId) {
       return _.find(board.columns, function(col) {

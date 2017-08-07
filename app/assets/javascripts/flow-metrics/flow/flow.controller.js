@@ -257,7 +257,7 @@ angular.module('flowMetrics.flow', [])
       if (flow.board.itemsInColumn(column).length > 1) {
         if (productivity > 1) {
           productivity -= 2;
-          console.log("productivity loss of 1 (now " + productivity + ") due to WIP size on " + column.name);
+          console.log("productivity loss of 2 (now " + productivity + ") due to WIP size on " + column.name);
         }
       }
       let delta = item.workRemaining - productivity;
@@ -315,6 +315,7 @@ angular.module('flowMetrics.flow', [])
     }
 
     flow.moveItem = function(item) {
+      item.workCompleted += item.workRemaining;
       let newTimestamp = new Date();
       let fromColumn = flow.board.columnById(item.columnId);
       if (fromColumn.end) { return; }
