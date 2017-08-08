@@ -22,6 +22,7 @@ angular.module('flowMetrics.flow', [])
     flow.avgCycleTime = 0;
     flow.elapsed = 0;
     flow.expectedNumInProgress = '-';
+    flow.valueDeliveredPerWorkerTime = "-";
 
     flow.batchOptions = {'On': true, 'Off': false};
     flow.workSizeOptions = {'Uniform (4)': 0, 'Low (1)': 1, 'High (5-17)': 2};
@@ -172,6 +173,9 @@ angular.module('flowMetrics.flow', [])
       flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
       flow.expectedNumInProgress = '-';
       flow.elapsed = 0;
+      flow.avgCycleTime = 0;
+      flow.arrivalRate = 0;
+      flow.valueDeliveredPerWorkerTime = "-";
 
     };
 
@@ -180,6 +184,7 @@ angular.module('flowMetrics.flow', [])
         flow.throughput = (20 / ((flow.end - flow.start) / 1000)).toFixed(1);
         flow.valueRate = (flow.valueDelivered() / ((flow.end - flow.start) / 1000)).toFixed(1);
         flow.expectedNumInProgress = "-";
+        flow.valueDeliveredPerWorkerTime = "-";
       }
       else if (flow.running) {
         let now = (new Date()).getTime();
@@ -194,11 +199,13 @@ angular.module('flowMetrics.flow', [])
         });
         flow.avgCycleTime = _.sum(cycleTimes) / flow.board.itemsCompleted().length;
         flow.expectedNumInProgress = Math.round(flow.arrivalRate * flow.avgCycleTime);
+        flow.valueDeliveredPerWorkerTime = (flow.valueDelivered() / (flow.totalWorkerTime() / 1000)).toFixed(1);
       }
       else {
         flow.throughput = "-";
         flow.valueRate = "-";
         flow.expectedNumInProgress = "-";
+        flow.valueDeliveredPerWorkerTime = "-";
       }
     }
 

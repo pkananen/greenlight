@@ -32,6 +32,14 @@ h4 {
   background-color: #eacd1f;
 }
 
+.results-black {
+  border-radius: 3px;
+  width: 20px;
+  padding: 5px;
+  color: #000000;
+  background-color: #eacd1f;
+}
+
 .worker-controls.block {
   display: inline-block;
   background-color: #fff;

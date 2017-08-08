@@ -78,7 +78,8 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           Value Over Time
-          <span class="float-right"><label>Value Rate </label><span> ${{ flow.valueRate }} / s</span></span>
+          <span class="u-padding-left float-right"><label>Value Rate </label><span class="results-black u-margin-left"> ${{ flow.valueRate }} / s</span></span>
+          <span class="float-right"><label>Value / Worker Time </label><span class="results-black u-margin-left"> ${{ flow.valueDelivered() }} / {{ (flow.totalWorkerTime() / 1000).toFixed(1) }} s = {{ flow.valueDeliveredPerWorkerTime }}</span></span>
         </div>
 
         <div class="panel-body">
