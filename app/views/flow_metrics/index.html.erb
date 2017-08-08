@@ -117,6 +117,66 @@
       </div>
     </div>
 
+    <!-- HISTORICAL NUM WORKERS / VALUE PER WORKER CHART -->
+    <div class="row col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="u-padding-left historical">Historical</span>
+          # Workers and Value per Worker Time
+        </div>
+
+        <div class="panel-body">
+          <canvas id="numWorkersPerValuePerWorkerChart" class="chart chart-bubble" chart-data="flow.historicalNumWorkersPerValuePerWorkerChartData" chart-labels="flow.historicalNumWorkersPerValuePerWorkerChartLabels" chart-options="flow.historicalNumWorkersPerValuePerWorkerChartOptions" width="900" height="300" style="display:block; width: 900px; height: 300px;">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORICAL NUM WORKERS / TOTAL RUN TIME CHART -->
+    <div class="row col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="u-padding-left historical">Historical</span>
+          # Workers per Total Time
+        </div>
+
+        <div class="panel-body">
+          <canvas id="numWorkersPerValuePerTimeChart" class="chart chart-bubble" chart-data="flow.historicalNumWorkersPerRunTimeChartData" chart-labels="flow.historicalNumWorkersPerRunTimeChartLabels" chart-options="flow.historicalNumWorkersPerRunTimeChartOptions" width="900" height="300" style="display:block; width: 900px; height: 300px;">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORICAL AVG QUEUE / VALUE RATE -->
+    <div class="row col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="u-padding-left historical">Historical</span>
+          Average Queue Size and Value Delivered Rate
+        </div>
+
+        <div class="panel-body">
+          <canvas id="avgQueueAndValueDeliveredRateChart" class="chart chart-bubble" chart-data="flow.historicalHighestAvgQueuePerValueRateChartData" chart-labels="flow.historicalHighestAvgQueuePerValueRateChartLabels" chart-options="flow.historicalHighestAvgQueuePerValueRateChartOptions" width="900" height="300" style="display:block; width: 900px; height: 300px;">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORICAL AVG QUEUE / VALUE RATE -->
+    <div class="row col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="u-padding-left historical">Historical</span>
+          Average Queue Size and Cycle Times
+        </div>
+
+        <div class="panel-body">
+          <canvas id="avgQueueAndCycleTimesChart" class="chart chart-bubble" chart-data="flow.historicalHighestAvgQueuePerCycleTimeChartData" chart-labels="flow.historicalHighestAvgQueuePerCycleTimeChartLabels" chart-options="flow.historicalHighestAvgQueuePerCycleTimeChartOptions" width="900" height="300" style="display:block; width: 900px; height: 300px;">
+          </canvas>
+        </div>
+      </div>
+    </div>
+
     <!--<div class="row">
       <table class="table table-striped">
         <caption><strong>Historical Times</strong></caption>

@@ -3,10 +3,19 @@ angular.module('flowMetrics.flow', [])
     var flow = this;
     flow.board = FlowBoard;
 
-    flow.historicalTimes = [];
+    // number of workers / value per worker s
+    flow.historicalNumWorkersPerValuePerWorkerChartData = [0, 0];
+    // number of workers / total run time
+    flow.historicalNumWorkersPerRunTimeChartData = [0, 0];
+    // avg queue size / value rate
+    flow.historicalHighestAvgQueuePerValueRateChartData = [0, 0];
+    // avg queue size / cycle time
+    flow.historicalHighestAvgQueuePerCycleTimeChartData = [0, 0];
+
     flow.historicalWorkerTimes = [];
     flow.historicalQueues = [];
     flow.historicalWip = [];
+
     flow.valueTimes = [];
     flow.done = false;
     flow.running = false;
@@ -43,8 +52,8 @@ angular.module('flowMetrics.flow', [])
     flow.queueWipSizeSeries = ['Avg Queue and WIP Sizes'];
     flow.queueWipSizeOptions = {
       scales: {
-        xAxes: [{stacked: true}],
-        yAxes: [{stacked: true, ticks: {min: 0, max: 5}}]
+        xAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Column"}}],
+        yAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Avg Size"}, ticks: {min: 0, max: 5}}]
       }
     };
 
@@ -53,8 +62,8 @@ angular.module('flowMetrics.flow', [])
     flow.cycleTimeBarChartData = [[0], [0]];
     flow.cycleTimeBarChartOptions = {
       scales: {
-        xAxes: [{stacked: true}],
-        yAxes: [{stacked: true, ticks: {min: 0, max: 80}}]
+        xAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Work Item - Work Completed"}}],
+        yAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Cycle Time in Seconds"}, ticks: {min: 0, max: 80}}]
       }
     };
 
@@ -63,8 +72,8 @@ angular.module('flowMetrics.flow', [])
     flow.workerTimesBarChartData = [0, 0, 0, 0, 0];
     flow.workerTimesBarChartOptions = {
       scales: {
-        xAxes: [{stacked: true}],
-        yAxes: [{stacked: true, ticks: {min: 0.0, max: 100.0}}]
+        xAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Worker"}}],
+        yAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Total Time in Seconds"}, ticks: {min: 0.0, max: 100.0}}]
       }
     };
 
@@ -75,13 +84,46 @@ angular.module('flowMetrics.flow', [])
     flow.valueTimesOptions = {
       scales: {
         xAxes: [{ type: 'time',
+                  scaleLabel: {display: true, labelString: "Time Delivered"},
                   time: {
                     displayFormats: { 'millisecond': 'mm:ss', 'second': 'mm:ss', 'minute': 'mm:ss', 'hour': 'mm:ss', 'day': 'mm:ss', 'week': 'mm:ss', 'month': 'mm:ss', 'quarter': 'mm:ss', 'year': 'mm:ss' }
                   },
                   ticks: {min: 0.0, max: 100.0}
 
       }],
-        yAxes: [ { id: 'y-axis-1', type: 'linear', display: true, position: 'left', ticks: {min: 0, max: 2000}}  ]
+        yAxes: [ { id: 'y-axis-1', type: 'linear', display: true, position: 'left', scaleLabel: {display:true, labelString: "$ Delivered"}, ticks: {min: 0, max: 2000}}  ]
+      }
+    };
+
+    flow.historicalNumWorkersPerValuePerWorkerChartLabels = [0];
+    flow.historicalNumWorkersPerValuePerWorkerChartOptions = {
+      scales: {
+        xAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Num Workers"}, ticks: {min: 0, max: 20}}],
+        yAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Value Per Worker Second"}, ticks: {min: 0.0, max: 10.0}}]
+      }
+    };
+
+    flow.historicalNumWorkersPerRunTimeChartLabels = [0];
+    flow.historicalNumWorkersPerRunTimeChartOptions = {
+      scales: {
+        xAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Num Workers"}, ticks: {min: 0, max: 20}}],
+        yAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Total Run Time"}, ticks: {min: 0.0, max: 400.0}}]
+      }
+    };
+
+    flow.historicalHighestAvgQueuePerValueRateChartLabels = [0];
+    flow.historicalHighestAvgQueuePerValueRateChartOptions = {
+      scales: {
+        xAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Highest Avg Queue Size"}, ticks: {min: 0, max: 20}}],
+        yAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Value Rate per Second"}, ticks: {min: 0.0, max: 100.0}}]
+      }
+    };
+
+    flow.historicalHighestAvgQueuePerCycleTimeChartLabels = [0];
+    flow.historicalHighestAvgQueuePerCycleTimeChartOptions = {
+      scales: {
+        xAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Highest Avg Queue Size"}, ticks: {min: 0, max: 20}}],
+        yAxes: [{stacked: true, scaleLabel: {display: true, labelString: "Avg Cycle Time"}, ticks: {min: 0.0, max: 100.0}}]
       }
     };
 
@@ -128,11 +170,15 @@ angular.module('flowMetrics.flow', [])
     flow.resetBoard = function() {
       if (flow.running) { return; };
       if (flow.done) {
-        flow.historicalTimes.push([
-          flow.totalActiveTime(),
-          flow.totalIdleTime(),
-          flow.totalTime(),
-          flow.totalIdleTimePercentage()]);
+        let avgQueue = _.max(_.map([3, 5, 7, 9], function(colId) {
+          return flow.averageQueueSize(flow.board.columnById(colId));
+        })).toFixed(1);
+
+        flow.historicalNumWorkersPerValuePerWorkerChartData.push({x: flow.allActiveWorkers().length, y: flow.valueDeliveredPerWorkerTime, r: 5});
+        flow.historicalNumWorkersPerRunTimeChartData.push({x: flow.allActiveWorkers().length, y: (flow.end - flow.start) / 1000, r: 5});
+        flow.historicalHighestAvgQueuePerValueRateChartData.push({x: avgQueue, y: flow.valueRate, r: 5});
+        flow.historicalHighestAvgQueuePerCycleTimeChartData.push({x: avgQueue, y: flow.avgCycleTime / 1000, r: 5});
+
         flow.historicalWorkerTimes.push([
           flow.totalActiveWorkerTime(),
           flow.totalIdleWorkerTime(),
@@ -176,6 +222,7 @@ angular.module('flowMetrics.flow', [])
       flow.avgCycleTime = 0;
       flow.arrivalRate = 0;
       flow.valueDeliveredPerWorkerTime = "-";
+      flow.cycleTimeBarChartLabels = _.map(flow.board.items, function(itm) { return itm.name; });
 
     };
 
@@ -183,8 +230,6 @@ angular.module('flowMetrics.flow', [])
       if (flow.done) {
         flow.throughput = (20 / ((flow.end - flow.start) / 1000)).toFixed(1);
         flow.valueRate = (flow.valueDelivered() / ((flow.end - flow.start) / 1000)).toFixed(1);
-        flow.expectedNumInProgress = "-";
-        flow.valueDeliveredPerWorkerTime = "-";
       }
       else if (flow.running) {
         let now = (new Date()).getTime();
@@ -364,19 +409,19 @@ angular.module('flowMetrics.flow', [])
     flow.recordQueueSizes = function() {
       _.each(flow.board.queueColumns(), function(col) {
         // don't record queues outside of the items in progress
-        // if (col.id >= flow.minItemProgress && col.id <= flow.maxItemProgress) {
+        if (col.id >= flow.minItemProgress && col.id <= flow.maxItemProgress) {
           let size = flow.board.itemsInColumn(col).length;
           flow.queueSizes[col.id].push(size);
-        // }
+        }
       });
     };
 
     flow.recordWipSizes = function() {
       _.each(flow.board.workColumns(), function(col) {
-        // if (col.id >= flow.minItemProgress && col.id <= flow.maxItemProgress) {
+        if (col.id >= flow.minItemProgress && col.id <= flow.maxItemProgress) {
           let size = flow.board.itemsInColumn(col).length;
           flow.wipSizes[col.id].push(size);
-        // }
+        }
       });
     };
 
@@ -384,7 +429,7 @@ angular.module('flowMetrics.flow', [])
       let samples = flow.queueSizes[column.id];
       let total = _.reduce(samples, function(memo, itm) { return memo + itm; }, 0);
       if (samples.length == 0) { return; }
-      return (total / samples.length).toFixed(2);
+      return total / samples.length;
     };
 
     flow.averageWipSize = function(column) {
